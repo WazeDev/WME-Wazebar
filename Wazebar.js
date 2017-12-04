@@ -804,7 +804,7 @@ var States = {};
         var css =  [
             '.WazeBarText {display:inline; padding-right:5px; margin-right:5px; border-right:thin solid grey; font-size:' + WazeBarSettings.BarFontSize + 'px;}',
             '.WazeBarIcon {display:inline; margin-left:3px; cursor:pointer;}',
-            '#WazeBarFavorites {max-height:300px; z-index:100; overflow:auto; display:none; position:absolute; background-color:#f9f9f9; min-width:180px; box-shadow:0px 8px 16px 0px rgba(0, 0, 0, 0.2); margin-top:-1px}',
+            '#WazeBarFavorites {max-height:300px; z-index:100; overflow:auto; display:none; position:absolute; background-color:#f9f9f9; min-width:180px; box-shadow:0px 8px 16px 0px rgba(0, 0, 0, 0.2); margin-top:-2px;}',
             '#WazeBarFavoritesList div a {color:black; padding:12px 16px; text-decoration:none; display:block; text-align:left;}',
             '#WazeBarFavoritesList div a:hover {background-color:#f1f1f1}',
             '.WazeBarUnread {max-height:300px; z-index:100; overflow:auto; display:none; position:absolute; background-color:#f9f9f9; min-width:180px; box-shadow:0px 8px 16px 0px rgba(0, 0, 0, 0.2);}',
