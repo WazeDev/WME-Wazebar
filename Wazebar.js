@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2017.12.04.01
+// @version      2017.12.20.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -11,6 +11,7 @@
 // @include      https://www.waze.com/*/editor*
 // @exclude      https://www.waze.com/user/editor*
 // @require      https://greasyfork.org/scripts/27023-jscolor/code/JSColor.js
+// @require      https://greasyfork.org/scripts/27254-clipboard-js/code/clipboardjs.js
 // @connect      status.waze.com
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -216,19 +217,7 @@ var States = {};
 
         $('#WazeBarSettingsButton').click(function(){
             $('#WazeBarSettings').css({'visibility':'visible'});
-            SelectedRegionChanged();
-            setChecked('WazeForumSetting', WazeBarSettings.DisplayWazeForum);
-            setChecked('WMEBetaForumSetting', WazeBarSettings.WMEBetaForum);
-            setChecked('ScriptsForum', WazeBarSettings.scriptsForum);
-            setChecked('USSMForumSetting', WazeBarSettings.USSMForum);
-            if(!forumPage)
-                setChecked('USChampForumSetting', WazeBarSettings.USChampForum);
-            setChecked('USWikiForumSetting', WazeBarSettings.USWikiForum);
-            setChecked('NAServerUpdateSetting', WazeBarSettings.NAServerUpdate);
-            $('#inboxInterval')[0].value = WazeBarSettings.inboxInterval;
-            $('#forumInterval')[0].value = WazeBarSettings.forumInterval;
-            $('#WazeBarFontSize')[0].value = WazeBarSettings.BarFontSize;
-            $('#WazeBarUnreadPopupDelay')[0].value = WazeBarSettings.UnreadPopupDelay;
+            LoadSettingsInterface();
         });
 
         $('#WazeBarRefreshButton').click(function(){
@@ -246,6 +235,23 @@ var States = {};
         if(forumPage){
             $('.navigation').css("top", $('#Wazebar').height() + "px");
         }
+    }
+
+    function LoadSettingsInterface(){
+        $('#txtWazebarSettings')[0].innerHTML = localStorage.Wazebar_Settings;
+            SelectedRegionChanged();
+            setChecked('WazeForumSetting', WazeBarSettings.DisplayWazeForum);
+            setChecked('WMEBetaForumSetting', WazeBarSettings.WMEBetaForum);
+            setChecked('ScriptsForum', WazeBarSettings.scriptsForum);
+            setChecked('USSMForumSetting', WazeBarSettings.USSMForum);
+            if(!forumPage)
+                setChecked('USChampForumSetting', WazeBarSettings.USChampForum);
+            setChecked('USWikiForumSetting', WazeBarSettings.USWikiForum);
+            setChecked('NAServerUpdateSetting', WazeBarSettings.NAServerUpdate);
+            $('#inboxInterval')[0].value = WazeBarSettings.inboxInterval;
+            $('#forumInterval')[0].value = WazeBarSettings.forumInterval;
+            $('#WazeBarFontSize')[0].value = WazeBarSettings.BarFontSize;
+            $('#WazeBarUnreadPopupDelay')[0].value = WazeBarSettings.UnreadPopupDelay;
     }
 
     function LoadNewTab(){
@@ -489,6 +495,15 @@ var States = {};
             'Forum font color <button id="colorPickerForumFont" class="jscolor {valueElement:null,hash:true,closable:true}" style="width: 15px; height: 15px; border: 2px solid black;"></button><br/><br/>',
             'Wiki font color <button id="colorPickerWikiFont" class="jscolor {valueElement:null,hash:true,closable:true}" style="width: 15px; height: 15px; border: 2px solid black;"></button><br/><br/> ',
             'Unread popup delay <input style="width: 40px;" min="0" type="text" id="WazeBarUnreadPopupDelay"/> s',
+            '<h4>Export/Import</h4>',
+            '<div>',
+            '<button class="fa fa-upload fa-2x" aria-hidden="true" id="btnWazebarCopySettings" style="cursor:pointer;border: 1; background: none; box-shadow:none;" title="Copy Wazebar settings to the clipboard" data-clipboard-target="#txtWazebarSettings"></button>',
+            '<textarea rows="4" cols="15" readonly id="txtWazebarSettings" style="resize:none;"></textarea>',
+            '</div>',//end export div
+            '<div>',
+            '<button class="fa fa-download fa-2x" aria-hidden="true" id="btnWazebarImportSettings" style="cursor:pointer;border: 1; background: none; box-shadow:none;" title="Import copied settings"></button>',
+            '<textarea rows="4" cols="15" id="txtWazebarImportSettings" style="resize:none;"></textarea>',
+            '</div>',//end import div
             '</div>',
             '<div>',
             '<div id="WBDisplayOptions" style="float: left;border-right: thin solid grey; padding-right:5px; border-left: thin solid grey; padding-left:5px;">',
@@ -528,7 +543,8 @@ var States = {};
             '<button id="WBSettingsSave" style="width: 85px;" class="btn btn-primary">Save</button>',
             '<button id="WBSettingsCancel" class="btn btn-default">Cancel</button>',
             '</div>',//end save/cancel buttons
-            '</div>'
+            '</div>',
+
             ].join(' '));
 
         if(forumPage)
@@ -625,6 +641,7 @@ var States = {};
             SaveSettings();
 
             BuildWazebar();
+            $('#txtWazebarSettings')[0].innerHTML = localStorage.Wazebar_Settings;
             $('#WazeBarSettings').css({'visibility':'hidden'}); //hide the settings window
             //Update the forum and wiki entries with the newly selected colors
             $('.WazeBarText.WazeBarForumItem a').css('color', "#" + $('#colorPickerForumFont')[0].jscolor.toString());
@@ -634,6 +651,16 @@ var States = {};
 
         //When they change the selected region, build a new state div.
         $('#WBRegions').change(SelectedRegionChanged);
+
+        $('#btnWazebarImportSettings').click(function(){
+            if($('#txtWazebarImportSettings')[0].value !== ""){
+                localStorage.Wazebar_Settings = $('#txtWazebarImportSettings')[0].value;
+                LoadSettingsObj();
+                LoadSettingsInterface();
+                BuildWazebar();
+            }
+        });
+        new Clipboard('#btnWazebarCopySettings');
     }
 
     function SelectedRegionChanged(){
