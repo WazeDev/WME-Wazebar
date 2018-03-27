@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2018.03.27.01
+// @version      2018.03.27.02
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -358,7 +358,6 @@ var States = {};
 
             $('#' + spanID).remove();
             if(count > 0){
-                debugger;
                 $('#'+parentID+' a').append("<span style='color:red;font-weight:bold;' id='" + spanID + "'> (" + count + ")<div class='WazeBarUnread' id='WazeBarUnread" + spanID +"' style='visibility:hidden; animation: " + WazeBarSettings.UnreadPopupDelay + "s fadeIn; animation-fill-mode: forwards; left:" + $("#"+parentID).position().left + "px; top:" + $("#"+parentID).height() + "px;'><div class='WazeBarUnreadList' id='WazeBarUnreadList" + spanID + "''></div></div></span>");
                 var pattern = /announce_unread.*\s*.*<a href="(.*)" class="topictitle">(.*)<\/a>/g;
                 var unreadItems;
