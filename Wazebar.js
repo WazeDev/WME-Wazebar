@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2018.03.27.02
+// @version      2018.04.02.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -140,7 +140,7 @@ var States = {};
 
     function BuildWazebar(){
         $('#Wazebar').remove();
-        var $Wazebar = $("<div>", {style:"min-height:20px", id:"Wazebar"});
+        var $Wazebar = $("<div>", {style:"min-height:20px;", id:"Wazebar"});
         $Wazebar.html([
             '<div class="WazeBarIcon" id="WazeBarSettingsButton"><i class="fa fa-cog" aria-hidden="true"></i></div>',
             '<div class="WazeBarIcon" id="WazeBarRefreshButton"><i class="fa fa-refresh" aria-hidden="true"></i></div>',
@@ -171,8 +171,15 @@ var States = {};
             WazeBarSettings.NAServerUpdate ? '<div style="display:inline;" id="WazebarStatus">NA Server Update: </div>' : ''
         ].join(' '));
 
-        if(forumPage)
+        if(forumPage){
             $('.waze-header').before($Wazebar);
+            $('.waze-header').css('margin-top', '20px');
+            $('#Wazebar').css('position', 'fixed');
+            $('#Wazebar').css('z-index','9999999');
+            $('#Wazebar').css('background-color', 'white');
+            $('#Wazebar').css('width', '100%');
+            $('#Wazebar').css('top', '0');
+        }
         else
             $('.app.container-fluid.show-sidebar').before($Wazebar);
 
