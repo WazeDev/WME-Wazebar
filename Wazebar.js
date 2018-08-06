@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2018.04.02.01
+// @version      2018.08.06.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -27,8 +27,7 @@ var States = {};
 (function() {
     'use strict';
 
-      function bootstrap(tries) {
-        tries = tries || 1;
+      function bootstrap(tries = 1) {
 
         if (/forum/.test(location.href) || (W && W.map &&
             W.model && W.loginManager.user &&
@@ -48,7 +47,7 @@ var States = {};
         forumPage= /forum/.test(location.href);
 
         if(forumPage){
-            loadScript("https://use.fontawesome.com/73f886e1d5.js");
+            loadScript("https://use.fontawesome.com/73f886e1d5.js", null);
             loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", init);
         }
         else
@@ -63,12 +62,14 @@ var States = {};
             script.onreadystatechange = function () {
                 if (script.readyState == "loaded" || script.readyState == "complete") {
                     script.onreadystatechange = null;
-                    callback();
+                    if(callback != null)
+                        callback();
                 }
             };
         } else { //Others
             script.onload = function () {
-                callback();
+                if(callback != null)
+                        callback();
             };
         }
 
