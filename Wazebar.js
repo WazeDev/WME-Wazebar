@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2018.08.06.01
+// @version      2018.10.16.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -367,13 +367,13 @@ var States = {};
             $('#' + spanID).remove();
             if(count > 0){
                 $('#'+parentID+' a').append("<span style='color:red;font-weight:bold;' id='" + spanID + "'> (" + count + ")<div class='WazeBarUnread' id='WazeBarUnread" + spanID +"' style='visibility:hidden; animation: " + WazeBarSettings.UnreadPopupDelay + "s fadeIn; animation-fill-mode: forwards; left:" + $("#"+parentID).position().left + "px; top:" + $("#"+parentID).height() + "px;'><div class='WazeBarUnreadList' id='WazeBarUnreadList" + spanID + "''></div></div></span>");
-                var pattern = /announce_unread.*\s*.*<a href="(.*)" class="topictitle">(.*)<\/a>/g;
+                var pattern = /announce_unread.*\s*.*<a href="(.*)" class="topictitle">(?!<img)(.*)<\/a>/g;
                 var unreadItems;
 
                 var links = "";
                 $('#WazeBarUnreadList' + spanID).empty();
                 while((unreadItems = pattern.exec(page)) !== null) {
-                        links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2] + '</a></div>';
+                        links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2].replace('img src="./styles/prosilver/imageset/icon_topic_solved_list.png"', 'img src="https://www.waze.com/forum/styles/prosilver/imageset/icon_topic_solved_list.png"') + '</a></div>';
                 }
                 pattern = /sticky_unread.*\s*.*<a href="(.*)" class="topictitle">(.*)<\/a>/g;
                 while((unreadItems = pattern.exec(page)) !== null) {
