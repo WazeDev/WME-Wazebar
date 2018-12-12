@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2018.10.16.01
+// @version      2018.12.12.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -81,7 +81,7 @@ var States = {};
         LoadSettingsObj();
         LoadStatesObj();
         if(!forumPage || (forumPage && WazeBarSettings.DisplayWazeForum)){
-            if(!forumPage){
+            if(!forumPage && W.model.states.top !== null){
                 currentState = W.model.states.top.name;
                 W.map.events.register("zoomend", this, function() {
                     setTimeout(updateCurrentStateEntries, 100);
@@ -106,7 +106,7 @@ var States = {};
     }
 
     function updateCurrentStateEntries(){
-        if(currentState != W.model.states.top.name){
+        if(W.model.states.top !== null && currentState != W.model.states.top.name){
             //user panned/zoomed to a different state, so we need to update the current state forum & wiki entries
             BuildWazebar();
             currentState = W.model.states.top.name;
@@ -420,7 +420,7 @@ var States = {};
 
     function BuildCurrentStateEntries(){
         var currentState = "";
-        if(!forumPage && W.model.countries.top.id == 235){ //only do for the US
+        if(!forumPage && typeof W.model.countries.objects[235] !== 'undefined'){ //only do for the US
             var currState = W.model.states.top.name;
             currentState += '<div class="WazeBarText WazeBarCurrState" id="' + currState.replace(' ', '_') + 'ForumCurrState"><a href="' + States[currState].forum.replace("https://www.waze.com",  location.origin) + '" ' + LoadNewTab() + '>' + States[currState].abbr + '</a></div>';
             currentState += '<div class="WazeBarText WazeBarCurrState"><a href="' + States[currState].wiki + '" target="_blank">' + States[currState].abbr + ' Wiki</a></div>';
