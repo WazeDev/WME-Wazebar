@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2018.12.12.01
+// @version      2019.03.19.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -14,6 +14,7 @@
 // @require      https://greasyfork.org/scripts/27254-clipboard-js/code/clipboardjs.js
 // @connect      status.waze.com
 // @grant        GM_xmlhttpRequest
+// @contributionURL https://github.com/WazeDev/Thank-The-Authors
 // ==/UserScript==
 
     var WazeBarSettings = [];
@@ -28,7 +29,6 @@ var States = {};
     'use strict';
 
       function bootstrap(tries = 1) {
-
         if (/forum/.test(location.href) || (W && W.map &&
             W.model && W.loginManager.user &&
             $ &&
@@ -169,7 +169,8 @@ var States = {};
             BuildRegionWikiEntries(),
             BuildStateWikiEntries(),
             BuildCurrentStateEntries(),
-            WazeBarSettings.NAServerUpdate ? '<div style="display:inline;" id="WazebarStatus">NA Server Update: </div>' : ''
+            WazeBarSettings.NAServerUpdate ? '<div style="display:inline;" id="WazebarStatus">NA Server Update: </div>' : '',
+            WazeBarSettings.ROWServerUpdate ? '<div style="display:inline;" id="WazebarStatusROW">ROW Server Update: </div>' : ''
         ].join(' '));
 
         if(forumPage){
@@ -215,7 +216,7 @@ var States = {};
             $('#WazeBarFavorites').css({'display':'none'});
         });
 
-        if(WazeBarSettings.NAServerUpdate){
+        if(WazeBarSettings.NAServerUpdate || WazeBarSettings.ROWServerUpdate){
             GM_xmlhttpRequest({
                 method: "GET",
                 url: 'https://status.waze.com/feeds/posts/default',
@@ -247,19 +248,20 @@ var States = {};
 
     function LoadSettingsInterface(){
         $('#txtWazebarSettings')[0].innerHTML = localStorage.Wazebar_Settings;
-            SelectedRegionChanged();
-            setChecked('WazeForumSetting', WazeBarSettings.DisplayWazeForum);
-            setChecked('WMEBetaForumSetting', WazeBarSettings.WMEBetaForum);
-            setChecked('ScriptsForum', WazeBarSettings.scriptsForum);
-            setChecked('USSMForumSetting', WazeBarSettings.USSMForum);
-            if(!forumPage)
-                setChecked('USChampForumSetting', WazeBarSettings.USChampForum);
-            setChecked('USWikiForumSetting', WazeBarSettings.USWikiForum);
-            setChecked('NAServerUpdateSetting', WazeBarSettings.NAServerUpdate);
-            $('#inboxInterval')[0].value = WazeBarSettings.inboxInterval;
-            $('#forumInterval')[0].value = WazeBarSettings.forumInterval;
-            $('#WazeBarFontSize')[0].value = WazeBarSettings.BarFontSize;
-            $('#WazeBarUnreadPopupDelay')[0].value = WazeBarSettings.UnreadPopupDelay;
+        SelectedRegionChanged();
+        setChecked('WazeForumSetting', WazeBarSettings.DisplayWazeForum);
+        setChecked('WMEBetaForumSetting', WazeBarSettings.WMEBetaForum);
+        setChecked('ScriptsForum', WazeBarSettings.scriptsForum);
+        setChecked('USSMForumSetting', WazeBarSettings.USSMForum);
+        if(!forumPage)
+            setChecked('USChampForumSetting', WazeBarSettings.USChampForum);
+        setChecked('USWikiForumSetting', WazeBarSettings.USWikiForum);
+        setChecked('NAServerUpdateSetting', WazeBarSettings.NAServerUpdate);
+        setChecked('ROWServerUpdateSetting', WazeBarSettings.ROWServerUpdate);
+        $('#inboxInterval')[0].value = WazeBarSettings.inboxInterval;
+        $('#forumInterval')[0].value = WazeBarSettings.forumInterval;
+        $('#WazeBarFontSize')[0].value = WazeBarSettings.BarFontSize;
+        $('#WazeBarUnreadPopupDelay')[0].value = WazeBarSettings.UnreadPopupDelay;
     }
 
     function LoadNewTab(){
@@ -404,9 +406,20 @@ var States = {};
     }
 
     function ParseStatusFeed(data){
-        var re = /NA map tiles were successfully updated to: (.*?)<\/title>/;
-        var result = data.responseText.match(re)[1].trim();
-        $('#WazebarStatus').append(result);
+        debugger;
+        let re = /NA map tiles were successfully updated to: (.*?)<\/title>/;
+        let result;
+        if(WazeBarSettings.NAServerUpdate){
+            result = data.responseText.match(re)[1].trim();
+            if(WazeBarSettings.ROWServerUpdate)
+                result += " | "
+            $('#WazebarStatus').append(result);
+        }
+        if(WazeBarSettings.ROWServerUpdate){
+            re = /INTL map tiles were successfully updated to: (.*?)<\/title>/;
+            result = data.responseText.match(re)[1].trim();
+            $('#WazebarStatusROW').append(result);
+        }
     }
 
     function BuildStateForumEntries(){
@@ -525,6 +538,7 @@ var States = {};
             (!forumPage && W.loginManager.user.rank >= 5) ? '<input type="checkbox" id="USChampForumSetting" /><label for="USChampForumSetting">US Champ Forum</label></br>' : '',
             '<input type="checkbox" id="USWikiForumSetting" /><label for="USWikiForumSetting">US Wiki Forum</label></br>',
             '<input type="checkbox" id="NAServerUpdateSetting" /><label for="NAServerUpdateSetting">NA Server Update</label></br>',
+            '<input type="checkbox" id="ROWServerUpdateSetting" /><label for="ROWServerUpdateSetting">ROW Server Update</label></br>',,
             'Region ' + BuildRegionDropdown() + '<input type="checkbox" id="RegionForumSetting"/><label for="RegionForumSetting">Forum</label> <input type="checkbox" id="RegionWikiSetting"/><label for="RegionWikiSetting">Wiki</label>',
             '<div id="WBStates"></div>',
             '</div>',//close region div
@@ -636,6 +650,7 @@ var States = {};
             WazeBarSettings.inboxInterval = $('#inboxInterval')[0].value;
             WazeBarSettings.forumInterval = $('#forumInterval')[0].value;
             WazeBarSettings.NAServerUpdate = isChecked('NAServerUpdateSetting');
+            WazeBarSettings.ROWServerUpdate = isChecked('ROWServerUpdateSetting');
             WazeBarSettings.ForumFontColor = "#" + $('#colorPickerForumFont')[0].jscolor.toString();
             WazeBarSettings.WikiFontColor = "#" + $('#colorPickerWikiFont')[0].jscolor.toString();
             WazeBarSettings.BarFontSize = $('#WazeBarFontSize')[0].value;
@@ -885,7 +900,8 @@ var States = {};
             WikiFontColor: "#69BF88",
             BarFontSize: 13,
             CustomLinks: [],
-            UnreadPopupDelay: 0
+            UnreadPopupDelay: 0,
+            ROWServerUpdate: false
         };
         WazeBarSettings = loadedSettings ? loadedSettings : defaultSettings;
         for (var prop in defaultSettings) {
@@ -918,7 +934,8 @@ var States = {};
                 WikiFontColor: WazeBarSettings.WikiFontColor,
                 BarFontSize: WazeBarSettings.BarFontSize,
                 CustomLinks: WazeBarSettings.CustomLinks,
-                UnreadPopupDelay: WazeBarSettings.UnreadPopupDelay
+                UnreadPopupDelay: WazeBarSettings.UnreadPopupDelay,
+                ROWServerUpdate: WazeBarSettings.ROWServerUpdate
             };
 
             localStorage.setItem("Wazebar_Settings", JSON.stringify(localsettings));
