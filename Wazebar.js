@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2019.03.19.01
+// @version      2019.03.20.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -406,7 +406,6 @@ var States = {};
     }
 
     function ParseStatusFeed(data){
-        debugger;
         let re = /NA map tiles were successfully updated to: (.*?)<\/title>/;
         let result;
         if(WazeBarSettings.NAServerUpdate){
