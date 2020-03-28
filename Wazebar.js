@@ -406,7 +406,7 @@ var States = {};
     }
 
     function ParseStatusFeed(data){
-        let re = /NA map tiles were successfully updated to: (.*?)<\/title>/;
+        let re = /North American map tiles were successfully updated to: (.*?)<\/title>/;
         let result;
         if(WazeBarSettings.NAServerUpdate){
             result = data.responseText.match(re)[1].trim();
@@ -415,7 +415,7 @@ var States = {};
             $('#WazebarStatus').append(result);
         }
         if(WazeBarSettings.ROWServerUpdate){
-            re = /INTL map tiles were successfully updated to: (.*?)<\/title>/;
+            re = /International map tiles were successfully updated to: (.*?)<\/title>/;
             result = data.responseText.match(re)[1].trim();
             $('#WazebarStatusROW').append(result);
         }
