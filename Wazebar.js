@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2020.03.28.01
+// @version      2021.06.16.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -17,7 +17,16 @@
 // @contributionURL https://github.com/WazeDev/Thank-The-Authors
 // ==/UserScript==
 
-    var WazeBarSettings = [];
+
+/* global W */
+/* ecmaVersion 2017 */
+/* global $ */
+/* global I18n */
+/* global _ */
+/* global WazeWrap */
+/* global require */
+
+var WazeBarSettings = [];
 var isBeta = false;
 var inboxInterval;
 var forumInterval;
@@ -29,7 +38,7 @@ var States = {};
     'use strict';
 
       function bootstrap(tries = 1) {
-        if (/forum/.test(location.href) || (W && W.map &&
+        if ((/forum/.test(location.href) && $('#control_bar_handler').css('visibility') === 'visible') || (typeof(W) != "undefined" && W && W.map &&
             W.model && W.loginManager.user &&
             $ &&
             W.model.states.top &&
@@ -37,7 +46,7 @@ var States = {};
             $('.app.container-fluid.show-sidebar').length > 0)) {
             preinit();
         } else if (tries < 1000)
-            setTimeout(function () {bootstrap(tries++);}, 200);
+            setTimeout(function () {bootstrap(++tries);}, 200);
     }
 
     bootstrap();
@@ -174,10 +183,10 @@ var States = {};
         ].join(' '));
 
         if(forumPage){
-            $('.waze-header').before($Wazebar);
-            $('.waze-header').css('margin-top', '20px');
-            $('#Wazebar').css('position', 'fixed');
+            $('wz-header').prepend($Wazebar);
+            //$('#Wazebar').css('position', 'fixed');
             $('#Wazebar').css('z-index','9999999');
+            $('#Wazebar').css('margin-left','20px');
             $('#Wazebar').css('background-color', 'white');
             $('#Wazebar').css('width', '100%');
             $('#Wazebar').css('top', '0');
@@ -308,8 +317,9 @@ var States = {};
 
     function GetPMCount(){
         $.get(location.origin + '/forum/ucp.php?i=pm&folder=inbox', function(Inbox){
-            if(Inbox.indexOf("Inbox (") != -1){
-                var count = Inbox.match(/Inbox \((\d+)\)/)[1];
+            let search = Inbox.match(/Inbox\s*\((\d+)\)/);
+            if(search){
+                let count = search[1];
                 $('#PMCount').remove();
                 $('#Inbox a').append("<span style='color:red;font-weight:bold;' id='PMCount'> (" + count + ")</span>");
             }
@@ -358,18 +368,15 @@ var States = {};
         $.get(path, function(page){
             var result = page.match(/topic_unread/g);
             count += result? result.length :0;
-            //topic_unread.*\s*.*<a href="(.*)" class="topictitle">(.*)<\/a>
             result = page.match(/sticky_unread/g);
             count += result? result.length :0;
-            //sticky_unread.*\s*.*<a href="(.*)" class="topictitle">(.*)<\/a>
             result = page.match(/announce_unread/g);
             count += result? result.length :0;
-            //announce_unread.*\s*.*<a href="(.*)" class="topictitle">(.*)<\/a>
 
             $('#' + spanID).remove();
             if(count > 0){
                 $('#'+parentID+' a').append("<span style='color:red;font-weight:bold;' id='" + spanID + "'> (" + count + ")<div class='WazeBarUnread' id='WazeBarUnread" + spanID +"' style='visibility:hidden; animation: " + WazeBarSettings.UnreadPopupDelay + "s fadeIn; animation-fill-mode: forwards; left:" + $("#"+parentID).position().left + "px; top:" + $("#"+parentID).height() + "px;'><div class='WazeBarUnreadList' id='WazeBarUnreadList" + spanID + "''></div></div></span>");
-                var pattern = /announce_unread.*\s*.*<a href="(.*)" class="topictitle">(?!<img)(.*)<\/a>/g;
+                var pattern = /announce_unread.*\s*<dt.*>\s*<a href=".*"\s*.*<\/a>\s*<div class="list-inner.*">\s*.*\s*.*\s*.*\s*(?:.*\s*)?<a href="(.*)"\s*class="boing topictitle.*">\s*(?!<img)(.*?)\s*<\/a>/g;
                 var unreadItems;
 
                 var links = "";
@@ -377,11 +384,11 @@ var States = {};
                 while((unreadItems = pattern.exec(page)) !== null) {
                         links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2].replace('img src="./styles/prosilver/imageset/icon_topic_solved_list.png"', 'img src="https://www.waze.com/forum/styles/prosilver/imageset/icon_topic_solved_list.png"') + '</a></div>';
                 }
-                pattern = /sticky_unread.*\s*.*<a href="(.*)" class="topictitle">(.*)<\/a>/g;
+                pattern = /sticky_unread">\s*.*\s*.*\s*.*\s*.*\s*.*\s*.*\s*<a href="(.*)"\s*class="boing topictitle.*">\s*(.*)\s*<\/a>/g;
                 while((unreadItems = pattern.exec(page)) !== null) {
                         links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2] + '</a></div>';
                 }
-                pattern = /topic_unread.*\s*.*\s*<a.*<\/a>.*\s.*<a href="(.*)" class="topictitle">(?!<img)(.*?)<\/a>/g;
+                pattern = /topic_unread.*\s*<dt.*>\s*<a href=".*"\s*.*<\/a>\s*<div class="list-inner.*">\s*.*\s*.*\s*.*\s*(?:.*\s*)?<a href="(.*)"\s*class="boing topictitle.*">\s*(?!<img)(.*?)\s*<\/a>/g;
                 while((unreadItems = pattern.exec(page)) !== null) {
                         links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2] + '</a></div>';
                 }
@@ -508,7 +515,7 @@ var States = {};
     function BuildSettingsInterface(){
         var $section = $("<div>", {style:"padding:8px 16px", id:"WazeBarSettings"});
         $section.html([
-            '<div id="WazeBarSettings" style="visibility:hidden; position:fixed; top:20%; left:40%; width:660px; min-height:150px; z-index:1000; background-color:white; border-width:3px; border-style:solid; border-radius:10px; padding:4px;">',
+            '<div id="WazeBarSettings" style="visibility:hidden; position:fixed; top:20%; left:40%; width:700px; min-height:150px; z-index:1000; background-color:white; border-width:3px; border-style:solid; border-radius:10px; padding:4px;">',
             '<div>',
             '<div style="float: left; margin-right: 2px;">',
             'Font size <input style="width: 50px;" min="8" type="number" id="WazeBarFontSize"/> px <br/><br/> ',
