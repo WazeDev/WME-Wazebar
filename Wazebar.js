@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2020.06.17.02
+// @version      2020.06.17.03
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -33,6 +33,7 @@ var forumInterval;
 var forumPage = false;
 var currentState = "";
 var States = {};
+var forumUnreadOffset = 0;
 
 (function() {
     'use strict';
@@ -58,6 +59,7 @@ var States = {};
         if(forumPage){
             loadScript("https://use.fontawesome.com/73f886e1d5.js", null);
             loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", init);
+            forumUnreadOffset = 25;
         }
         else
             init();
@@ -376,7 +378,7 @@ var States = {};
 
             $('#' + spanID).remove();
             if(count > 0){
-                $('#'+parentID+' a').append("<span style='color:red;font-weight:bold;' id='" + spanID + "'> (" + count + ")<div class='WazeBarUnread' id='WazeBarUnread" + spanID +"' style='visibility:hidden; animation: " + WazeBarSettings.UnreadPopupDelay + "s fadeIn; animation-fill-mode: forwards; left:" + $("#"+parentID).position().left + "px; top:" + $("#"+parentID).height() + "px;'><div class='WazeBarUnreadList' id='WazeBarUnreadList" + spanID + "''></div></div></span>");
+                $('#'+parentID+' a').append(`<span style='color:red;font-weight:bold;' id='${spanID}'> (${count})<div class='WazeBarUnread' id='WazeBarUnread${spanID}' style='visibility:hidden; animation: ${WazeBarSettings.UnreadPopupDelay}s fadeIn; animation-fill-mode: forwards; left:${$("#"+parentID).position().left}px; top:${parseInt($("#"+parentID).height()) + forumUnreadOffset}px;'><div class='WazeBarUnreadList' id='WazeBarUnreadList${spanID}''></div></div></span>`);
                 var pattern = /announce_unread.*\s*<dt.*>\s*<a href=".*"\s*.*<\/a>\s*<div class="list-inner.*">\s*.*\s*.*\s*.*\s*(?:.*\s*)?<a href="(.*)"\s*class="boing topictitle.*">\s*(?:<svg.*\s*<path.*\s*<\/svg>\s*)?(?!<img)(.*?)\s*<\/a>/g;
                 var unreadItems;
 
