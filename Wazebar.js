@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2021.06.19.01
+// @version      2021.06.19.02
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -387,7 +387,7 @@ var forumUnreadOffset = 0;
                 while((unreadItems = pattern.exec(page)) !== null) {
                         links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2].replace('img src="./styles/prosilver/imageset/icon_topic_solved_list.png"', 'img src="https://www.waze.com/forum/styles/prosilver/imageset/icon_topic_solved_list.png"') + '</a></div>';
                 }
-                pattern = /sticky_unread">\s*.*\s*.*\s*.*\s*.*\s*.*\s*.*\s*<a href="(.*)"\s*class="boing topictitle.*">\s*(.*)\s*<\/a>/g;
+                pattern = /sticky_unread">\s*.*\s*.*\s*.*\s*.*\s*.*\s*.*\s*<a href="(.*)"\s*class="boing topictitle.*">\s*(?:<svg.*\s*<path.*\s*<\/svg>\s*)?(.*)\s*<\/a>/g;
                 while((unreadItems = pattern.exec(page)) !== null) {
                         links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2] + '</a></div>';
                 }
