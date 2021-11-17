@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2021.06.19.02
+// @version      2021.11.17.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -815,7 +815,7 @@ var forumUnreadOffset = 0;
         States["District of Columbia"] = {forum:"https://www.waze.com/forum/viewforum.php?f=258", wiki:"https://wazeopedia.waze.com/wiki/USA/District_of_Columbia", abbr:"DC"};
         States.Florida = {forum:"https://www.waze.com/forum/viewforum.php?f=193", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"FL"};
         States.Georgia = {forum:"https://www.waze.com/forum/viewforum.php?f=214", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"GA"};
-        States.Hawaii = {forum:"https://www.waze.com/forum/viewforum.php?f=305", wiki:"https://wazeopedia.waze.com/wiki/USA/Hawaii", abbr:"HA"};
+        States.Hawaii = {forum:"https://www.waze.com/forum/viewforum.php?f=305", wiki:"https://wazeopedia.waze.com/wiki/USA/Hawaii", abbr:"HI"};
         States.Idaho = {forum:"https://www.waze.com/forum/viewforum.php?f=648", wiki:"https://wazeopedia.waze.com/wiki/USA/Idaho", abbr:"ID"};
         States.Illinois = {forum:"https://www.waze.com/forum/viewforum.php?f=253", wiki:"https://wazeopedia.waze.com/wiki/USA/Illinois", abbr:"IL"};
         States.Indiana = {forum:"https://www.waze.com/forum/viewforum.php?f=631", wiki:"https://wazeopedia.waze.com/wiki/USA/Indiana", abbr:"IN"};
