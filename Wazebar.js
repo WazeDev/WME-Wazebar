@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2021.11.17.01
+// @version      2022.09.15.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -299,7 +299,7 @@ var forumUnreadOffset = 0;
         $('#WazeBarCustomLinksList').empty();
         var links = "";
         for(var i=0;i<WazeBarSettings.CustomLinks.length;i++){
-            links += '<div style="position:relative;"><a href="' + WazeBarSettings.CustomLinks[i].href + '" target="_blank">' + WazeBarSettings.CustomLinks[i].text + '</a><i id="WazeBarCustomLinksListClose' + i + '" style="position:absolute; right:0; top:0;" class="fa fa-times" title="Remove custom link"></i></div>';
+            links += '<div style="position:relative;"><a href="' + WazeBarSettings.CustomLinks[i].href + '" target="_blank">' + WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + '</a><i id="WazeBarCustomLinksListClose' + i + '" style="position:absolute; right:0; top:0;" class="fa fa-times" title="Remove custom link"></i></div>';
         }
 
         $('#WazeBarCustomLinksList').prepend(links);
@@ -332,6 +332,7 @@ var forumUnreadOffset = 0;
     }
 
     function checkForums(){
+        debugger;
         if(WazeBarSettings.WMEBetaForum)
             checkUnreadTopics(location.origin + "/forum/viewforum.php?f=211", "WMEBetaForum", "WMEBetaForumCount");
         if(WazeBarSettings.scriptsForum)
@@ -356,12 +357,12 @@ var forumUnreadOffset = 0;
         });
         Object.keys(WazeBarSettings.header.region).forEach(function(region,index){
             if(WazeBarSettings.header.region[region].forum)
-                checkUnreadTopics(WazeBarSettings.header.region[region].forum.replace("https://www.waze.com",  location.origin), region.replace(' ', '') + 'Forum', region.replace(' ', '')+'ForumCount');
+                checkUnreadTopics(WazeBarSettings.header.region[region].forum.replace("https://www.waze.com", location.origin), region.replace(/\s/g, '') + 'Forum', region.replace(/\s/g, '')+'ForumCount');
         });
 
         for(var i=0;i<WazeBarSettings.CustomLinks.length;i++){
             if(WazeBarSettings.CustomLinks[i].href.includes("/forum"))
-                checkUnreadTopics(WazeBarSettings.CustomLinks[i].href.replace("https://www.waze.com",  location.origin), WazeBarSettings.CustomLinks[i].text.replace(' ', '') + i + 'Forum', WazeBarSettings.CustomLinks[i].text.replace(' ', '')+i+'ForumCount');
+                checkUnreadTopics(WazeBarSettings.CustomLinks[i].href.replace("https://www.waze.com", location.origin), WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'Forum', WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'ForumCount');
         }
 
     }
@@ -456,7 +457,7 @@ var forumUnreadOffset = 0;
             //forum entries first
             for(var i=0;i<WazeBarSettings.CustomLinks.length;i++){
                 if(WazeBarSettings.CustomLinks[i].href.includes("/forum"))
-                   customList += '<div class="WazeBarText WazeBarForumItem" id="' + WazeBarSettings.CustomLinks[i].text.replace(' ', '') + i + 'Forum"><a href="' + WazeBarSettings.CustomLinks[i].href.replace("https://www.waze.com",  location.origin) + '" ' + LoadNewTab() + '>' + WazeBarSettings.CustomLinks[i].text + '</a></div>';
+                   customList += '<div class="WazeBarText WazeBarForumItem" id="' + WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'Forum"><a href="' + WazeBarSettings.CustomLinks[i].href.replace("https://www.waze.com",  location.origin) + '" ' + LoadNewTab() + '>' + WazeBarSettings.CustomLinks[i].text + '</a></div>';
             }
 
             //wiki entries
@@ -629,6 +630,7 @@ var forumUnreadOffset = 0;
         LoadCustomLinks();
 
         $('#WazeBarAddCustomLink').click(function(){
+debugger;
             if($('#WazeBarCustomText').val() !== "" && $('#WazeBarCustomURL').val() !== ""){
                 var url = $('#WazeBarCustomURL').val();
                 if(! (url.startsWith("http://") || url.startsWith("https://")))
