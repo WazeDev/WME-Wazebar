@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2022.09.15.01
+// @version      2022.12.12.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -332,7 +332,6 @@ var forumUnreadOffset = 0;
     }
 
     function checkForums(){
-        debugger;
         if(WazeBarSettings.WMEBetaForum)
             checkUnreadTopics(location.origin + "/forum/viewforum.php?f=211", "WMEBetaForum", "WMEBetaForumCount");
         if(WazeBarSettings.scriptsForum)
@@ -630,7 +629,6 @@ var forumUnreadOffset = 0;
         LoadCustomLinks();
 
         $('#WazeBarAddCustomLink').click(function(){
-debugger;
             if($('#WazeBarCustomText').val() !== "" && $('#WazeBarCustomURL').val() !== ""){
                 var url = $('#WazeBarCustomURL').val();
                 if(! (url.startsWith("http://") || url.startsWith("https://")))
