@@ -47,7 +47,7 @@ var forumUnreadOffset = 0;
             $('.app.container-fluid.show-sidebar').length > 0)) {
             preinit();
         } else if (tries < 1000)
-            setTimeout(function () {bootstrap(++tries);}, 500);
+            setTimeout(function () {bootstrap(++tries);}, 200);
     }
 
     bootstrap();
