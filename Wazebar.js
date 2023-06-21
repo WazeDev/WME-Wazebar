@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2022.12.12.01
+// @version      2023.06.21.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -10,9 +10,10 @@
 // @include      https://www.waze.com/editor*
 // @include      https://www.waze.com/*/editor*
 // @exclude      https://www.waze.com/user/editor*
-// @require      https://greasyfork.org/scripts/27023-jscolor/code/JSColor.js
+// @require      https://greasyfork.org/scripts/27023-wme-jscolor/code/WME-JSColor.js
 // @require      https://greasyfork.org/scripts/27254-clipboard-js/code/clipboardjs.js
 // @connect      status.waze.com
+// @connect      storage.googleapis.com
 // @grant        GM_xmlhttpRequest
 // @contributionURL https://github.com/WazeDev/Thank-The-Authors
 // ==/UserScript==
@@ -185,7 +186,7 @@ var forumUnreadOffset = 0;
         ].join(' '));
 
         if(forumPage){
-            $('wz-header').prepend($Wazebar);
+            $('.main_content').prepend($Wazebar);
             //$('#Wazebar').css('position', 'fixed');
             $('#Wazebar').css('z-index','9999999');
             $('#Wazebar').css('margin-left','20px');
@@ -227,10 +228,18 @@ var forumUnreadOffset = 0;
             $('#WazeBarFavorites').css({'display':'none'});
         });
 
-        if(WazeBarSettings.NAServerUpdate || WazeBarSettings.ROWServerUpdate){
+        if(WazeBarSettings.NAServerUpdate){
             GM_xmlhttpRequest({
                 method: "GET",
-                url: 'https://status.waze.com/feeds/posts/default',
+                url: 'https://storage.googleapis.com/waze-tile-build-public/release-history/na-feed-v2.xml',
+                onload: ParseStatusFeed
+            });
+        }
+
+        if(WazeBarSettings.ROWServerUpdate){
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: 'https://storage.googleapis.com/waze-tile-build-public/release-history/intl-feed-v2.xml',
                 onload: ParseStatusFeed
             });
         }
@@ -416,17 +425,17 @@ var forumUnreadOffset = 0;
     }
 
     function ParseStatusFeed(data){
-        let re = /North American map tiles were successfully updated to: (.*?)<\/title>/;
+        let re = /North America map tiles were successfully updated to: (.*?)<\/title>/;
         let result;
         if(WazeBarSettings.NAServerUpdate){
-            result = data.responseText.match(re)[1].trim();
+            result = new Date(data.responseText.match(re)[1].trim()).toLocaleString();
             if(WazeBarSettings.ROWServerUpdate)
                 result += " | "
             $('#WazebarStatus').append(result);
         }
         if(WazeBarSettings.ROWServerUpdate){
             re = /International map tiles were successfully updated to: (.*?)<\/title>/;
-            result = data.responseText.match(re)[1].trim();
+            result = new Date(data.responseText.match(re)[1].trim()).toLocaleString();
             $('#WazebarStatusROW').append(result);
         }
     }
