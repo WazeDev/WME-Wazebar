@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2023.06.21.01
+// @version      2023.08.02.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -94,7 +94,7 @@ var forumUnreadOffset = 0;
         LoadStatesObj();
         if(!forumPage || (forumPage && WazeBarSettings.DisplayWazeForum)){
             if(!forumPage && W.model.states.top !== null){
-                currentState = W.model.states.top.name;
+                currentState = W.model.states.top.attributes.name;
                 W.map.events.register("zoomend", this, function() {
                     setTimeout(updateCurrentStateEntries, 100);
                 });
@@ -118,10 +118,10 @@ var forumUnreadOffset = 0;
     }
 
     function updateCurrentStateEntries(){
-        if(W.model.states.top !== null && currentState != W.model.states.top.name){
+        if(W.model.states.top !== null && currentState != W.model.states.top.attributes.name){
             //user panned/zoomed to a different state, so we need to update the current state forum & wiki entries
             BuildWazebar();
-            currentState = W.model.states.top.name;
+            currentState = W.model.states.top.attributes.name;
         }
     }
 
@@ -452,7 +452,7 @@ var forumUnreadOffset = 0;
     function BuildCurrentStateEntries(){
         var currentState = "";
         if(!forumPage && typeof W.model.countries.objects[235] !== 'undefined'){ //only do for the US
-            var currState = W.model.states.top.name;
+            var currState = W.model.states.top.attributes.name;
             currentState += '<div class="WazeBarText WazeBarCurrState" id="' + currState.replace(' ', '_') + 'ForumCurrState"><a href="' + States[currState].forum.replace("https://www.waze.com",  location.origin) + '" ' + LoadNewTab() + '>' + States[currState].abbr + '</a></div>';
             currentState += '<div class="WazeBarText WazeBarCurrState"><a href="' + States[currState].wiki + '" target="_blank">' + States[currState].abbr + ' Wiki</a></div>';
         }
