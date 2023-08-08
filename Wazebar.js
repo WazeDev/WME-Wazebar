@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2023.08.02.01
+// @version      2023.08.08.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -10,10 +10,10 @@
 // @include      https://www.waze.com/editor*
 // @include      https://www.waze.com/*/editor*
 // @exclude      https://www.waze.com/user/editor*
-// @require      https://greasyfork.org/scripts/27023-wme-jscolor/code/WME-JSColor.js
 // @require      https://greasyfork.org/scripts/27254-clipboard-js/code/clipboardjs.js
 // @connect      status.waze.com
 // @connect      storage.googleapis.com
+// @connect      greasyfork.org
 // @grant        GM_xmlhttpRequest
 // @contributionURL https://github.com/WazeDev/Thank-The-Authors
 // ==/UserScript==
@@ -35,6 +35,10 @@ var forumPage = false;
 var currentState = "";
 var States = {};
 var forumUnreadOffset = 0;
+const SCRIPT_VERSION = GM_info.script.version.toString();
+const SCRIPT_NAME = GM_info.script.name;
+const DOWNLOAD_URL = GM_info.script.fileURL;
+var curr_ver = GM_info.script.version;
 
 (function() {
     'use strict';
@@ -44,7 +48,6 @@ var forumUnreadOffset = 0;
             W.model && W.loginManager.user &&
             $ &&
             W.model.states.top &&
-            window.jscolor &&
             $('.app.container-fluid.show-sidebar').length > 0)) {
             preinit();
         } else if (tries < 1000)
@@ -62,8 +65,21 @@ var forumUnreadOffset = 0;
             loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", init);
             forumUnreadOffset = 25;
         }
-        else
+        else{
+            loadScriptUpdateMonitor();
             init();
+        }
+    }
+
+    function loadScriptUpdateMonitor() {
+        let updateMonitor;
+        try {
+            updateMonitor = new WazeWrap.Alerts.ScriptUpdateMonitor(SCRIPT_NAME, SCRIPT_VERSION, DOWNLOAD_URL, GM_xmlhttpRequest);
+            updateMonitor.start();
+        } catch (ex) {
+            // Report, but don't stop if ScriptUpdateMonitor fails.
+            console.error(`${SCRIPT_NAME}:`, ex);
+        }
     }
 
     function loadScript(url, callback) {
@@ -94,7 +110,7 @@ var forumUnreadOffset = 0;
         LoadStatesObj();
         if(!forumPage || (forumPage && WazeBarSettings.DisplayWazeForum)){
             if(!forumPage && W.model.states.top !== null){
-                currentState = W.model.states.top.attributes.name;
+                currentState = getCurrentState();
                 W.map.events.register("zoomend", this, function() {
                     setTimeout(updateCurrentStateEntries, 100);
                 });
@@ -109,46 +125,22 @@ var forumUnreadOffset = 0;
             injectCss();
             BuildWazebar();
             BuildSettingsInterface();
-            initColorPicker();
-            if ($('#colorPickerForumFont')[0].jscolor){
-                $('#colorPickerForumFont')[0].jscolor.fromString(WazeBarSettings.PlaceNameFontColor);
-                $('#colorPickerWikiFont')[0].jscolor.fromString(WazeBarSettings.PlaceNameFontOutline);
-            }
         }
+    }
+
+    function getCurrentState(){
+        if(W.model.states.top.attributes === undefined)
+            return W.model.states.top.name;
+        else
+            return W.model.states.top.attributes.name;
     }
 
     function updateCurrentStateEntries(){
-        if(W.model.states.top !== null && currentState != W.model.states.top.attributes.name){
+        if(W.model.states.top !== null && currentState != getCurrentState()){
             //user panned/zoomed to a different state, so we need to update the current state forum & wiki entries
             BuildWazebar();
-            currentState = W.model.states.top.attributes.name;
+            currentState = getCurrentState();
         }
-    }
-
-    function initColorPicker(tries){
-        tries = tries || 1;
-
-        if ($('#colorPickerForumFont')[0].jscolor ) {
-            $('#colorPickerForumFont')[0].jscolor.fromString(WazeBarSettings.ForumFontColor);
-            //$('#colorPickerForumFont')[0].jscolor.onChange = jscolorChanged;
-
-            $('#colorPickerWikiFont')[0].jscolor.fromString(WazeBarSettings.WikiFontColor);
-            //$('#colorPickerWikiFont')[0].jscolor.onChange = jscolorChanged;
-
-            $('[id^="colorPicker"]')[0].jscolor.closeText = 'Close';
-
-        } else if (tries < 1000) {
-            setTimeout(function () {initColorPicker(tries++);}, 200);
-        }
-    }
-
-    function jscolorChanged(){
-        //WazeBarSettings.ForumFontColor = "#" + $('#colorPickerForumFont')[0].jscolor.toString();
-        //WazeBarSettings.WikiFontColor = "#" + $('#colorPickerWikiFont')[0].jscolor.toString();
-        //SaveSettings();
-        //PIEPlaceNameLayer.styleMap.styles.default.defaultStyle.fontColor = settings.PlaceNameFontColor;
-        //PIEPlaceNameLayer.styleMap.styles.default.defaultStyle.labelOutlineColor = settings.PlaceNameFontOutline;
-        //DisplayPlaceNames();
     }
 
     function BuildWazebar(){
@@ -452,7 +444,7 @@ var forumUnreadOffset = 0;
     function BuildCurrentStateEntries(){
         var currentState = "";
         if(!forumPage && typeof W.model.countries.objects[235] !== 'undefined'){ //only do for the US
-            var currState = W.model.states.top.attributes.name;
+            var currState = getCurrentState();
             currentState += '<div class="WazeBarText WazeBarCurrState" id="' + currState.replace(' ', '_') + 'ForumCurrState"><a href="' + States[currState].forum.replace("https://www.waze.com",  location.origin) + '" ' + LoadNewTab() + '>' + States[currState].abbr + '</a></div>';
             currentState += '<div class="WazeBarText WazeBarCurrState"><a href="' + States[currState].wiki + '" target="_blank">' + States[currState].abbr + ' Wiki</a></div>';
         }
@@ -531,8 +523,8 @@ var forumUnreadOffset = 0;
             '<div>',
             '<div style="float: left; margin-right: 2px;">',
             'Font size <input style="width: 50px;" min="8" type="number" id="WazeBarFontSize"/> px <br/><br/> ',
-            'Forum font color <button id="colorPickerForumFont" class="jscolor {valueElement:null,hash:true,closable:true}" style="width: 15px; height: 15px; border: 2px solid black;"></button><br/><br/>',
-            'Wiki font color <button id="colorPickerWikiFont" class="jscolor {valueElement:null,hash:true,closable:true}" style="width: 15px; height: 15px; border: 2px solid black;"></button><br/><br/> ',
+            `Forum font color <button id="colorPickerForumFont" style="width: 15px; height: 15px; border: 2px solid black; background-color:${WazeBarSettings.ForumFontColor}"></button><br/><br/>`,
+            `Wiki font color <button id="colorPickerWikiFont" style="width: 15px; height: 15px; border: 2px solid black; background-color:${WazeBarSettings.WikiFontColor}"></button><br/><br/>`,
             'Unread popup delay <input style="width: 40px;" min="0" type="text" id="WazeBarUnreadPopupDelay"/> s',
             '<h4>Export/Import</h4>',
             '<div>',
@@ -669,8 +661,6 @@ var forumUnreadOffset = 0;
             WazeBarSettings.forumInterval = $('#forumInterval')[0].value;
             WazeBarSettings.NAServerUpdate = isChecked('NAServerUpdateSetting');
             WazeBarSettings.ROWServerUpdate = isChecked('ROWServerUpdateSetting');
-            WazeBarSettings.ForumFontColor = "#" + $('#colorPickerForumFont')[0].jscolor.toString();
-            WazeBarSettings.WikiFontColor = "#" + $('#colorPickerWikiFont')[0].jscolor.toString();
             WazeBarSettings.BarFontSize = $('#WazeBarFontSize')[0].value;
             if($('#WazeBarUnreadPopupDelay')[0].value.trim() == "")
                 $('#WazeBarUnreadPopupDelay')[0].value = 0;
@@ -685,8 +675,6 @@ var forumUnreadOffset = 0;
             $('#txtWazebarSettings')[0].innerHTML = localStorage.Wazebar_Settings;
             $('#WazeBarSettings').css({'visibility':'hidden'}); //hide the settings window
             //Update the forum and wiki entries with the newly selected colors
-            $('.WazeBarText.WazeBarForumItem a').css('color', "#" + $('#colorPickerForumFont')[0].jscolor.toString());
-            $('.WazeBarText.WazeBarWikiItem a').css('color', "#" + $('#colorPickerWikiFont')[0].jscolor.toString());
             $('.WazeBarText').css('font-size', $('#WazeBarFontSize')[0].value + 'px');
         });
 
