@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2023.08.08.01
+// @version      2024.04.08.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -47,7 +47,7 @@ var curr_ver = GM_info.script.version;
         if ((/forum/.test(location.href) && $('#control_bar_handler').css('visibility') === 'visible') || (typeof(W) != "undefined" && W && W.map &&
             W.model && W.loginManager.user &&
             $ &&
-            W.model.states.top &&
+            W.model.getTopState() &&
             $('.app.container-fluid.show-sidebar').length > 0)) {
             preinit();
         } else if (tries < 1000)
@@ -109,7 +109,7 @@ var curr_ver = GM_info.script.version;
         LoadSettingsObj();
         LoadStatesObj();
         if(!forumPage || (forumPage && WazeBarSettings.DisplayWazeForum)){
-            if(!forumPage && W.model.states.top !== null){
+            if(!forumPage && W.model.getTopState() !== null){
                 currentState = getCurrentState();
                 W.map.events.register("zoomend", this, function() {
                     setTimeout(updateCurrentStateEntries, 100);
@@ -129,14 +129,14 @@ var curr_ver = GM_info.script.version;
     }
 
     function getCurrentState(){
-        if(W.model.states.top.attributes === undefined)
-            return W.model.states.top.name;
+        if(W.model.getTopState().attributes === undefined)
+            return W.model.getTopState().getName();
         else
-            return W.model.states.top.attributes.name;
+            return W.model.getTopState().attributes.name;
     }
 
     function updateCurrentStateEntries(){
-        if(W.model.states.top !== null && currentState != getCurrentState()){
+        if(W.model.getTopState() !== null && currentState != getCurrentState()){
             //user panned/zoomed to a different state, so we need to update the current state forum & wiki entries
             BuildWazebar();
             currentState = getCurrentState();
@@ -948,3 +948,4 @@ var curr_ver = GM_info.script.version;
         }
     }
 })();
+
