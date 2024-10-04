@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2024.04.08.01
+// @version      2024.10.04.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
 // @include      https://www.waze.com/forum/*
-// @include      https://webnew.waze.com/forum/*
 // @include      https://www.waze.com/editor*
 // @include      https://www.waze.com/*/editor*
 // @exclude      https://www.waze.com/user/editor*
@@ -160,12 +159,12 @@ var curr_ver = GM_info.script.version;
 			'<button id="WazeBarAddFavorite">Add</button>',
 			'</div>',//End button div
 			'</div></div></div>',
-            '<div class="WazeBarText WazeBarForumItem" id="Inbox"><a href="' + location.origin + '/forum/ucp.php?i=pm&folder=inbox" target="_blank">Inbox</a></div>',
-            WazeBarSettings.WMEBetaForum ? '<div class="WazeBarText WazeBarForumItem" id="WMEBetaForum"><a href="' + location.origin + '/forum/viewforum.php?f=211" ' + LoadNewTab() + '>WME Beta</a></div>' : '',
-            WazeBarSettings.scriptsForum ? '<div class="WazeBarText WazeBarForumItem" id="Scripts"><a href="' + location.origin + '/forum/viewforum.php?f=819" ' + LoadNewTab() + '>Scripts</a></div>' : '',
-            WazeBarSettings.USSMForum ? '<div class="WazeBarText WazeBarForumItem" id="USSMForum"><a href="' + location.origin + '/forum/viewforum.php?f=1286" ' + LoadNewTab() + '>US SM</a></div>' : '',
-            WazeBarSettings.USChampForum ? '<div class="WazeBarText WazeBarForumItem" id="USChampForum"><a href="' + location.origin + '/forum/viewforum.php?f=338" ' + LoadNewTab() + '>US Champ</a></div>' : '',
-            WazeBarSettings.USWikiForum ? '<div class="WazeBarText WazeBarForumItem" id="USWikiForum"><a href="' + location.origin + '/forum/viewforum.php?f=1636" ' + LoadNewTab() + '>US Wiki</a></div>' : '',
+            // '<div class="WazeBarText WazeBarForumItem" id="Inbox"><a href="' + location.origin + '/forum/ucp.php?i=pm&folder=inbox" target="_blank">Inbox</a></div>',
+            WazeBarSettings.WMEBetaForum ? '<div class="WazeBarText WazeBarForumItem" id="WMEBetaForum"><a href="https://www.waze.com/discuss/c/editors/beta-community/4088" ' + LoadNewTab() + '>WME Beta</a></div>' : '',
+            WazeBarSettings.scriptsForum ? '<div class="WazeBarText WazeBarForumItem" id="Scripts"><a href="https://www.waze.com/discuss/c/editors/addons-extensions-and-scripts/3984" ' + LoadNewTab() + '>Scripts</a></div>' : '',
+            WazeBarSettings.USSMForum ? '<div class="WazeBarText WazeBarForumItem" id="USSMForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-state-managers/4890" ' + LoadNewTab() + '>US SM</a></div>' : '',
+            WazeBarSettings.USChampForum ? '<div class="WazeBarText WazeBarForumItem" id="USChampForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-waze-champs/4893" ' + LoadNewTab() + '>US Champ</a></div>' : '',
+            WazeBarSettings.USWikiForum ? '<div class="WazeBarText WazeBarForumItem" id="USWikiForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-wiki-discussion/4894" ' + LoadNewTab() + '>US Wiki</a></div>' : '',
             BuildRegionForumEntries(),
             BuildStateForumEntries(),
             BuildStateUnlockEntries(),
@@ -189,7 +188,7 @@ var curr_ver = GM_info.script.version;
         else
             $('.app.container-fluid.show-sidebar').before($Wazebar);
 
-            GetPMCount();
+            //GetPMCount();
             checkForums();
             StartIntervals();
 
@@ -197,7 +196,7 @@ var curr_ver = GM_info.script.version;
             if($('#WazeBarText').val() !== "" && $('#WazeBarURL').val() !== ""){
                 var url = $('#WazeBarURL').val();
                 if(! (url.startsWith("http://") || url.startsWith("https://")))
-                    url = "http://"+url;
+                    url = "https://"+url;
                 WazeBarSettings.Favorites.push({href:url, text:$('#WazeBarText').val()});
                 $('#WazeBarURL').val("");
                 $('#WazeBarText').val("");
@@ -243,9 +242,9 @@ var curr_ver = GM_info.script.version;
 
         $('#WazeBarRefreshButton').click(function(){
             $('#WazeBarRefreshButton i').addClass('fa-spin');
-            window.clearInterval(inboxInterval);
+            //window.clearInterval(inboxInterval);
             window.clearInterval(forumInterval);
-            GetPMCount();
+            //GetPMCount();
             checkForums();
             StartIntervals();
             $('#WazeBarRefreshButton i').removeClass('fa-spin');
@@ -270,7 +269,7 @@ var curr_ver = GM_info.script.version;
         setChecked('USWikiForumSetting', WazeBarSettings.USWikiForum);
         setChecked('NAServerUpdateSetting', WazeBarSettings.NAServerUpdate);
         setChecked('ROWServerUpdateSetting', WazeBarSettings.ROWServerUpdate);
-        $('#inboxInterval')[0].value = WazeBarSettings.inboxInterval;
+        //$('#inboxInterval')[0].value = WazeBarSettings.inboxInterval;
         $('#forumInterval')[0].value = WazeBarSettings.forumInterval;
         $('#WazeBarFontSize')[0].value = WazeBarSettings.BarFontSize;
         $('#WazeBarUnreadPopupDelay')[0].value = WazeBarSettings.UnreadPopupDelay;
@@ -314,11 +313,11 @@ var curr_ver = GM_info.script.version;
     }
 
     function StartIntervals(){
-        inboxInterval = setInterval(GetPMCount,WazeBarSettings.inboxInterval * 60000);
+        //inboxInterval = setInterval(GetPMCount,WazeBarSettings.inboxInterval * 60000);
         forumInterval = setInterval(checkForums, WazeBarSettings.forumInterval * 60000);
     }
 
-    function GetPMCount(){
+    /*function GetPMCount(){
         $.get(location.origin + '/forum/ucp.php?i=pm&folder=inbox', function(Inbox){
             let search = Inbox.match(/Inbox\s*\((\d+)\)/);
             //Inbox.match(/Inbox\s*\((\d+)\)/)[1];
@@ -330,72 +329,109 @@ var curr_ver = GM_info.script.version;
             else
                 $('#PMCount').remove();
         });
-    }
+    } */
 
     function checkForums(){
         if(WazeBarSettings.WMEBetaForum)
-            checkUnreadTopics(location.origin + "/forum/viewforum.php?f=211", "WMEBetaForum", "WMEBetaForumCount");
+            checkUnreadTopics("https://www.waze.com/discuss/c/editors/beta-community/4088", "WMEBetaForum", "WMEBetaForumCount");
         if(WazeBarSettings.scriptsForum)
-            checkUnreadTopics(location.origin + "/forum/viewforum.php?f=819", "Scripts", "ScriptsCount"); //Scripts
+            checkUnreadTopics("https://www.waze.com/discuss/c/editors/addons-extensions-and-scripts/3984", "Scripts", "ScriptsCount"); //Scripts
         if(WazeBarSettings.USSMForum)
-            checkUnreadTopics(location.origin + "/forum/viewforum.php?f=1286", "USSMForum", "USSMForumCount");
+            checkUnreadTopics("https://www.waze.com/discuss/c/editors/united-states/us-state-managers/4890", "USSMForum", "USSMForumCount");
         if(WazeBarSettings.USChampForum)
-            checkUnreadTopics(location.origin + "/forum/viewforum.php?f=338", "USChampForum", "USChampForumCount");
+            checkUnreadTopics("https://www.waze.com/discuss/c/editors/united-states/us-waze-champs/4893", "USChampForum", "USChampForumCount");
         if(WazeBarSettings.USWikiForum)
-            checkUnreadTopics(location.origin + "/forum/viewforum.php?f=1636", "USWikiForum", "USWikiForumCount");
+            checkUnreadTopics("https://www.waze.com/discuss/c/editors/united-states/us-wiki-discussion/4894", "USWikiForum", "USWikiForumCount");
 
         Object.keys(WazeBarSettings.header).forEach(function(state,index) {
             if(WazeBarSettings.header[state].forum)
                 checkUnreadTopics(WazeBarSettings.header[state].forum.replace("https://www.waze.com", location.origin), state.replace(' ', '_') + 'Forum', state.replace(' ', '_')+'ForumCount');
 
             if(WazeBarSettings.header[state].unlock){
-                var url = location.origin + "/forum/search.php?keywords=" + state + "&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search";
-                if(state === "Virginia")
-                    url = location.origin + "/forum/search.php?keywords=-West%2BVirginia&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search";
+                var url = "https://www.waze.com/discuss/search?q=" + state + "%20%23united-states%3Aus-unlock-and-update-requests%20order%3Alatest";
+                //if(state === "Virginia")
+                //    url = location.origin + "/forum/search.php?keywords=-West%2BVirginia&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search";
                 checkUnreadTopics(url, state.replace(' ', '_')+'Unlock', state.replace(' ', '_')+'UnlockCount');
             }
         });
-        Object.keys(WazeBarSettings.header.region).forEach(function(region,index){
+        /*Object.keys(WazeBarSettings.header.region).forEach(function(region,index){
             if(WazeBarSettings.header.region[region].forum)
                 checkUnreadTopics(WazeBarSettings.header.region[region].forum.replace("https://www.waze.com", location.origin), region.replace(/\s/g, '') + 'Forum', region.replace(/\s/g, '')+'ForumCount');
-        });
+        }); */
 
         for(var i=0;i<WazeBarSettings.CustomLinks.length;i++){
             if(WazeBarSettings.CustomLinks[i].href.includes("/forum"))
-                checkUnreadTopics(WazeBarSettings.CustomLinks[i].href.replace("https://www.waze.com", location.origin), WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'Forum', WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'ForumCount');
+                checkUnreadTopics(WazeBarSettings.CustomLinks[i].href, WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'Forum', WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'ForumCount');
         }
 
     }
 
+    function valstr(obj, prop) {
+        var str = "";
+        if (obj.hasOwnProperty(prop)) {
+            str = ", " + prop + ": " + obj[prop];
+        }
+        return str;
+    }
     function checkUnreadTopics(path, parentID, spanID){
         var count = 0;
+        var jdat, dat1;
         $.get(path, function(page){
-            var result = page.match(/topic_unread/g);
-            count += result? result.length :0;
-            result = page.match(/sticky_unread/g);
-            count += result? result.length :0;
-            result = page.match(/announce_unread/g);
-            count += result? result.length :0;
+            const jpattern = /data-preloaded=\"(.*)\">/;
+            var dat = jpattern.exec(page);
+            if (dat && dat.length > 1) {
+                dat1 = dat[1].replace(/&quot;/g, '"');
+                jdat = JSON.parse(dat1);
+                var jdat2;
+                if (jdat.search) {
+                    jdat2 = JSON.parse(jdat.search);
+                }
+                else if (jdat.topic_list) {
+                    jdat2 = JSON.parse(jdat.topic_list);
+                }
+                else {
+                    console.log("wazebar: invalid json ", parentID);
+                    return 0;
+                }
+            } else {
+                console.log("wazebar: missing data-preloaded ", parentID);
+            }
+            var topix = jdat2.topic_list?.topics;
+            if (topix === undefined) {
+                return 0;
+            }
 
             $('#' + spanID).remove();
+            var links = "";
+            for (var tp in topix) {
+                if (Object.prototype.hasOwnProperty.call(topix, tp)) {
+                    // do stuff
+
+                    //var pattern = /announce_unread.*\s*<dt.*>\s*<a href=".*"\s*.*<\/a>\s*<div class="list-inner.*">\s*.*\s*.*\s*.*\s*(?:.*\s*)?<a href="(.*)"\s*class="boing topictitle.*">\s*(?:<svg.*\s*<path.*\s*<\/svg>\s*)?(?!<img)(.*?)\s*<\/a>/g;
+                    //var unreadItems;
+
+                    var tobj = topix[tp];
+                    const ldate = Date.parse(tobj.last_posted_at);
+                    const diff = Date.now() - ldate;
+                    const dfhrs = diff / 3600000; // hours since last post on this topic
+                    var lrpn = tobj.last_read_post_number ? tobj.last_read_post_number : 0;
+                    var hpn = tobj.highest_post_number ? tobj.highest_post_number : 0;
+                    var item_to_read = (lrpn > 0 && lrpn < hpn) ? lrpn + 1 : hpn;
+                    var info = tobj.slug + valstr(tobj,"last_read_post_number") + valstr(tobj,"highest_post_number") + valstr(tobj,"unseen") + valstr(tobj,"new_posts") + valstr(tobj,"unread_posts") + valstr(tobj,"unread");
+                    if (dfhrs < 48 || lrpn < hpn) {
+                        console.log("WB: " + info);
+                    }
+                    if ((lrpn > 0 && lrpn < hpn) || (tobj.unseen) || (tobj.unread_posts && tobj.unread_posts > 0) || tobj.unread && tobj.unread > 0) {
+                        count += 1;
+                        links += '<div style="position:relative;"><a href="https://www.waze.com/discuss/t/' + tobj.slug + "/" + tobj.id+ "/" + item_to_read + '"' + LoadNewTab() + '>' + tobj.fancy_title + '</a></div>';
+                        // unreadItems[2].replace('img src="./styles/prosilver/imageset/icon_topic_solved_list.png"', 'img src="https://www.waze.com/forum/styles/prosilver/imageset/icon_topic_solved_list.png"')
+                    }
+                }
+            }
             if(count > 0){
                 $('#'+parentID+' a').append(`<span style='color:red;font-weight:bold;' id='${spanID}'> (${count})<div class='WazeBarUnread' id='WazeBarUnread${spanID}' style='visibility:hidden; animation: ${WazeBarSettings.UnreadPopupDelay}s fadeIn; animation-fill-mode: forwards; left:${$("#"+parentID).position().left}px; top:${parseInt($("#"+parentID).height()) + forumUnreadOffset}px;'><div class='WazeBarUnreadList' id='WazeBarUnreadList${spanID}''></div></div></span>`);
-                var pattern = /announce_unread.*\s*<dt.*>\s*<a href=".*"\s*.*<\/a>\s*<div class="list-inner.*">\s*.*\s*.*\s*.*\s*(?:.*\s*)?<a href="(.*)"\s*class="boing topictitle.*">\s*(?:<svg.*\s*<path.*\s*<\/svg>\s*)?(?!<img)(.*?)\s*<\/a>/g;
-                var unreadItems;
 
-                var links = "";
                 $('#WazeBarUnreadList' + spanID).empty();
-                while((unreadItems = pattern.exec(page)) !== null) {
-                        links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2].replace('img src="./styles/prosilver/imageset/icon_topic_solved_list.png"', 'img src="https://www.waze.com/forum/styles/prosilver/imageset/icon_topic_solved_list.png"') + '</a></div>';
-                }
-                pattern = /sticky_unread">\s*.*\s*.*\s*.*\s*.*\s*.*\s*.*\s*<a href="(.*)"\s*class="boing topictitle.*">\s*(?:<svg.*\s*<path.*\s*<\/svg>\s*)?(.*)\s*<\/a>/g;
-                while((unreadItems = pattern.exec(page)) !== null) {
-                        links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2] + '</a></div>';
-                }
-                pattern = /topic_unread.*\s*<dt.*>\s*<a href=".*"\s*.*<\/a>\s*<div class="list-inner.*">\s*.*\s*.*\s*.*\s*(?:.*\s*)?<a href="(.*)"\s*class="boing topictitle.*">\s*(?:<svg.*\s*<path.*\s*<\/svg>\s*)?(?!<img)(.*?)\s*<\/a>/g;
-                while((unreadItems = pattern.exec(page)) !== null) {
-                        links += '<div style="position:relative;"><a href="' + location.origin + "/forum" + unreadItems[1].replace("amp;","").substring(1) + '&view=unread#unread"' + LoadNewTab() + '>' + unreadItems[2] + '</a></div>';
-                }
                 $('#WazeBarUnreadList' + spanID).prepend(links);
 
                 $('#' + spanID).mouseleave(function() {
@@ -406,10 +442,10 @@ var curr_ver = GM_info.script.version;
                     $('#WazeBarUnread' + spanID).css({'display':'block'});
                 });
 
-
                 $('#' + spanID + ' a').click(function(){
                     $('#WazeBarUnread' + spanID).css({'display':'none'});
                 });
+
             }
         });
 
@@ -456,8 +492,8 @@ var curr_ver = GM_info.script.version;
         if(WazeBarSettings.CustomLinks && WazeBarSettings.CustomLinks.length > 0){
             //forum entries first
             for(var i=0;i<WazeBarSettings.CustomLinks.length;i++){
-                if(WazeBarSettings.CustomLinks[i].href.includes("/forum"))
-                   customList += '<div class="WazeBarText WazeBarForumItem" id="' + WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'Forum"><a href="' + WazeBarSettings.CustomLinks[i].href.replace("https://www.waze.com",  location.origin) + '" ' + LoadNewTab() + '>' + WazeBarSettings.CustomLinks[i].text + '</a></div>';
+                if(WazeBarSettings.CustomLinks[i].href.includes("/discuss"))
+                   customList += '<div class="WazeBarText WazeBarForumItem" id="' + WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'Forum"><a href="' + WazeBarSettings.CustomLinks[i].href + '" ' + LoadNewTab() + '>' + WazeBarSettings.CustomLinks[i].text + '</a></div>';
             }
 
             //wiki entries
@@ -482,10 +518,12 @@ var curr_ver = GM_info.script.version;
         var stateUnlocks = "";
         Object.keys(WazeBarSettings.header).forEach(function(state,index) {
             if(WazeBarSettings.header[state].unlock){
-                if(state !== "Virginia")
+                stateUnlocks += '<div class="WazeBarText WazeBarForumItem" id="' + state.replace(' ', '_') + 'Unlock"><a href="https://www.waze.com/discuss/search?q=' + state + '%20%23united-states%3Aus-unlock-and-update-requests%20order%3Alatest" ' + LoadNewTab() + '>' + WazeBarSettings.header[state].abbr + ' Unlock</a></div>';
+                /*if(state !== "Virginia")
                     stateUnlocks += '<div class="WazeBarText WazeBarForumItem" id="' + state.replace(' ', '_') + 'Unlock"><a href="' + location.origin + '/forum/search.php?keywords=' + state + '&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search" ' + LoadNewTab() + '>' + WazeBarSettings.header[state].abbr + ' Unlock</a></div>';
                 else
                     stateUnlocks += '<div class="WazeBarText WazeBarForumItem" id="' + state.replace(' ', '_') + 'Unlock"><a href="' + location.origin + '/forum/search.php?keywords=-West%2BVirginia&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search" ' + LoadNewTab() + '>' + WazeBarSettings.header[state].abbr + ' Unlock</a></div>';
+                */
                 //stateUnlocks += '<div style="display:inline; padding-right:5px; margin-right:5px; border-right:thin solid grey;"><a href="' + WazeBarSettings.header[state].wiki + '" target="_blank">' + WazeBarSettings.header[state].abbr + ' Wiki</a></div>';
             }
         });
@@ -540,7 +578,7 @@ var curr_ver = GM_info.script.version;
             '<div id="WBDisplayOptions" style="float: left;border-right: thin solid grey; padding-right:5px; border-left: thin solid grey; padding-left:5px;">',
             '<input type="checkbox" id="WazeForumSetting" /><label for="WazeForumSetting">Display on Forum pages</label></br>',
             '<div style="margin-left:5px;">',
-            'Inbox check frequency <input type="number" id="inboxInterval" min="1" style="width:50px;"> mins</br>',
+         // 'Inbox check frequency <input type="number" id="inboxInterval" min="1" style="width:50px;"> mins</br>',
             'Forum check frequency <input type="number" id="forumInterval" min="1" style="width:50px;"> mins</br>',
             '<input type="checkbox" id="WMEBetaForumSetting" /><label for="WMEBetaForumSetting">WME Beta Forum</label></br>',
             '<input type="checkbox" id="ScriptsForum" /><label for="ScriptsForum">Scripts Forum</label></br>',
@@ -570,7 +608,7 @@ var curr_ver = GM_info.script.version;
             '</div></div>',
 
             '<div style="clear: both; padding-top:5px;">',
-            '<div style="position: relative; float:left; display: inline-block"><a href="' + location.origin + '/forum/viewtopic.php?f=819&t=219816" target="_blank">Forum thread</a></div>',
+            '<div style="position: relative; float:left; display: inline-block"><a href="https://www.waze.com/discuss/t/script-wazebar/208863" target="_blank">Forum thread</a></div>',
             '<div style="position: relative; float: right; display: inline-block">', //save/cancel buttons
             '<button id="WBSettingsSave" style="width: 85px;" class="btn btn-primary">Save</button>',
             '<button id="WBSettingsCancel" class="btn btn-default">Cancel</button>',
@@ -657,7 +695,7 @@ var curr_ver = GM_info.script.version;
             if(!forumPage)
                 WazeBarSettings.USChampForum = isChecked('USChampForumSetting');
             WazeBarSettings.USWikiForum = isChecked('USWikiForumSetting');
-            WazeBarSettings.inboxInterval = $('#inboxInterval')[0].value;
+            //WazeBarSettings.inboxInterval = $('#inboxInterval')[0].value;
             WazeBarSettings.forumInterval = $('#forumInterval')[0].value;
             WazeBarSettings.NAServerUpdate = isChecked('NAServerUpdateSetting');
             WazeBarSettings.ROWServerUpdate = isChecked('ROWServerUpdateSetting');
@@ -769,7 +807,8 @@ var curr_ver = GM_info.script.version;
                     if(!WazeBarSettings.header[state])
                         WazeBarSettings.header[state] = {};
                     if(this.checked){
-                        WazeBarSettings.header[state].unlock = location.origin + "/forum/search.php?keywords=" + state + "&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search";
+                        //WazeBarSettings.header[state].unlock = location.origin + "/forum/search.php?keywords=" + state + "&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search";
+                        WazeBarSettings.header[state].unlock = "https://www.waze.com/discuss/search?q=" + state + "%20%23united-states%3Aus-unlock-and-update-requests%20order%3Alatest";
                         WazeBarSettings.header[state].abbr = States[state].abbr;
                     }
                     else
@@ -801,60 +840,60 @@ var curr_ver = GM_info.script.version;
     }
 
     function LoadStatesObj(){
-        States.Alabama = {forum:"https://www.waze.com/forum/viewforum.php?f=213", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"AL"};
-        States.Alaska = {forum:"https://www.waze.com/forum/viewforum.php?f=254", wiki:"https://wazeopedia.waze.com/wiki/USA/Alaska", abbr:"AK"};
-        States.Arizona = {forum:"https://www.waze.com/forum/viewforum.php?f=652", wiki:"https://wazeopedia.waze.com/wiki/USA/Arizona", abbr:"AZ"};
-        States.Arkansas = {forum:"https://www.waze.com/forum/viewforum.php?f=598", wiki:"https://wazeopedia.waze.com/wiki/USA/Arkansas", abbr:"AR"};
-        States.California = {forum:"https://www.waze.com/forum/viewforum.php?f=251", wiki:"https://wazeopedia.waze.com/wiki/USA/California", abbr:"CA"};
-        States.Colorado = {forum:"https://www.waze.com/forum/viewforum.php?f=654", wiki:"https://wazeopedia.waze.com/wiki/USA/Colorado", abbr:"CO"};
-        States.Connecticut = {forum:"https://www.waze.com/forum/viewforum.php?f=247", wiki:"https://wazeopedia.waze.com/wiki/USA/Connecticut", abbr:"CT"};
-        States.Delaware = {forum:"https://www.waze.com/forum/viewforum.php?f=575", wiki:"https://wazeopedia.waze.com/wiki/USA/Delaware", abbr:"DE"};
-        States["District of Columbia"] = {forum:"https://www.waze.com/forum/viewforum.php?f=258", wiki:"https://wazeopedia.waze.com/wiki/USA/District_of_Columbia", abbr:"DC"};
-        States.Florida = {forum:"https://www.waze.com/forum/viewforum.php?f=193", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"FL"};
-        States.Georgia = {forum:"https://www.waze.com/forum/viewforum.php?f=214", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"GA"};
-        States.Hawaii = {forum:"https://www.waze.com/forum/viewforum.php?f=305", wiki:"https://wazeopedia.waze.com/wiki/USA/Hawaii", abbr:"HI"};
-        States.Idaho = {forum:"https://www.waze.com/forum/viewforum.php?f=648", wiki:"https://wazeopedia.waze.com/wiki/USA/Idaho", abbr:"ID"};
-        States.Illinois = {forum:"https://www.waze.com/forum/viewforum.php?f=253", wiki:"https://wazeopedia.waze.com/wiki/USA/Illinois", abbr:"IL"};
-        States.Indiana = {forum:"https://www.waze.com/forum/viewforum.php?f=631", wiki:"https://wazeopedia.waze.com/wiki/USA/Indiana", abbr:"IN"};
-        States.Iowa = {forum:"https://www.waze.com/forum/viewforum.php?f=632", wiki:"https://wazeopedia.waze.com/wiki/USA/Iowa", abbr:"IA"};
-        States.Kansas = {forum:"https://www.waze.com/forum/viewforum.php?f=628", wiki:"https://wazeopedia.waze.com/wiki/USA/Kansas", abbr:"KS"};
-        States.Kentucky = {forum:"https://www.waze.com/forum/viewforum.php?f=571", wiki:"https://wazeopedia.waze.com/wiki/USA/Kentucky", abbr:"KY"};
-        States.Louisiana = {forum:"https://www.waze.com/forum/viewforum.php?f=594", wiki:"https://wazeopedia.waze.com/wiki/USA/Louisiana", abbr:"LA"};
-        States.Maine = {forum:"https://www.waze.com/forum/viewforum.php?f=583", wiki:"https://wazeopedia.waze.com/wiki/USA/Maine", abbr:"ME"};
-        States.Maryland = {forum:"https://www.waze.com/forum/viewforum.php?f=246", wiki:"https://wazeopedia.waze.com/wiki/USA/Maryland", abbr:"MD"};
-        States.Massachusetts = {forum:"https://www.waze.com/forum/viewforum.php?f=618", wiki:"https://wazeopedia.waze.com/wiki/USA/Massachusetts", abbr:"MA"};
-        States.Michigan = {forum:"https://www.waze.com/forum/viewforum.php?f=630", wiki:"https://wazeopedia.waze.com/wiki/USA/Michigan", abbr:"MI"};
-        States.Minnesota = {forum:"https://www.waze.com/forum/viewforum.php?f=259", wiki:"https://wazeopedia.waze.com/wiki/USA/Minnesota", abbr:"MN"};
-        States.Mississippi = {forum:"https://www.waze.com/forum/viewforum.php?f=596", wiki:"https://wazeopedia.waze.com/wiki/USA/Mississippi", abbr:"MS"};
-        States.Missouri = {forum:"https://www.waze.com/forum/viewforum.php?f=414", wiki:"https://wazeopedia.waze.com/wiki/USA/Missouri", abbr:"MO"};
-        States.Montana = {forum:"https://www.waze.com/forum/viewforum.php?f=649", wiki:"https://wazeopedia.waze.com/wiki/USA/Montana", abbr:"MT"};
-        States.Nebraska = {forum:"https://www.waze.com/forum/viewforum.php?f=634", wiki:"https://wazeopedia.waze.com/wiki/USA/Nebraska", abbr:"NE"};
-        States.Nevada = {forum:"https://www.waze.com/forum/viewforum.php?f=651", wiki:"https://wazeopedia.waze.com/wiki/USA/Nevada", abbr:"NV"};
-        States["New Hampshire"] = {forum:"https://www.waze.com/forum/viewforum.php?f=585", wiki:"https://wazeopedia.waze.com/wiki/USA/New_Hampshire", abbr:"NH"};
-        States["New Jersey"] = {forum:"https://www.waze.com/forum/viewforum.php?f=249", wiki:"https://wazeopedia.waze.com/wiki/USA/New_Jersey", abbr:"NJ"};
-        States["New Mexico"] = {forum:"https://www.waze.com/forum/viewforum.php?f=653", wiki:"https://wazeopedia.waze.com/wiki/USA/New_Mexico", abbr:"NM"};
-        States["New York"] = {forum:"https://www.waze.com/forum/viewforum.php?f=250", wiki:"https://wazeopedia.waze.com/wiki/USA/New_York", abbr:"NY"};
-        States["North Carolina"] = {forum:"https://www.waze.com/forum/viewforum.php?f=255", wiki:"https://wazeopedia.waze.com/wiki/USA/North_Carolina", abbr:"NC"};
-        States["North Dakota"] = {forum:"https://www.waze.com/forum/viewforum.php?f=624", wiki:"https://wazeopedia.waze.com/wiki/USA/North_Dakota", abbr:"ND"};
-        States.Ohio = {forum:"https://www.waze.com/forum/viewforum.php?f=261", wiki:"https://wazeopedia.waze.com/wiki/USA/Ohio", abbr:"OH"};
-        States.Oklahoma = {forum:"https://www.waze.com/forum/viewforum.php?f=600", wiki:"https://wazeopedia.waze.com/wiki/USA/Oklahoma", abbr:"OK"};
-        States.Oregon = {forum:"https://www.waze.com/forum/viewforum.php?f=647", wiki:"https://wazeopedia.waze.com/wiki/USA/Oregon", abbr:"OR"};
-        States.Pennsylvania = {forum:"https://www.waze.com/forum/viewforum.php?f=215", wiki:"https://wazeopedia.waze.com/wiki/USA/Pennsylvania", abbr:"PA"};
-        States["Rhode Island"] = {forum:"https://www.waze.com/forum/viewforum.php?f=577", wiki:"https://wazeopedia.waze.com/wiki/USA/Rhode_Island", abbr:"RI"};
-        States["South Carolina"] = {forum:"https://www.waze.com/forum/viewforum.php?f=256", wiki:"https://wazeopedia.waze.com/wiki/USA/South_Carolina", abbr:"SC"};
-        States["South Dakota"] = {forum:"https://www.waze.com/forum/viewforum.php?f=626", wiki:"https://wazeopedia.waze.com/wiki/USA/South_Dakota", abbr:"SD"};
-        States.Tennessee = {forum:"https://www.waze.com/forum/viewforum.php?f=210", wiki:"https://wazeopedia.waze.com/wiki/USA/Tennessee", abbr:"TN"};
-        States.Texas = {forum:"https://www.waze.com/forum/viewforum.php?f=237", wiki:"https://wazeopedia.waze.com/wiki/USA/Texas", abbr:"TX"};
-        States.Utah = {forum:"https://www.waze.com/forum/viewforum.php?f=364", wiki:"https://wazeopedia.waze.com/wiki/USA/Utah", abbr:"UT"};
-        States.Vermont = {forum:"https://www.waze.com/forum/viewforum.php?f=587", wiki:"https://wazeopedia.waze.com/wiki/USA/Vermont", abbr:"VT"};
-        States.Virginia = {forum:"https://www.waze.com/forum/viewforum.php?f=580", wiki:"https://wazeopedia.waze.com/wiki/USA/Virginia", abbr:"VA"};
-        States.Washington = {forum:"https://www.waze.com/forum/viewforum.php?f=201", wiki:"https://wazeopedia.waze.com/wiki/USA/Washington", abbr:"WA"};
-        States["West Virginia"] = {forum:"https://www.waze.com/forum/viewforum.php?f=582", wiki:"https://wazeopedia.waze.com/wiki/USA/West_Virginia", abbr:"WV"};
-        States.Wisconsin = {forum:"https://www.waze.com/forum/viewforum.php?f=387", wiki:"https://wazeopedia.waze.com/wiki/USA/Wisconsin", abbr:"WI"};
-        States.Wyoming = {forum:"https://www.waze.com/forum/viewforum.php?f=650", wiki:"https://wazeopedia.waze.com/wiki/USA/Wyoming", abbr:"WY"};
-        States["Puerto Rico"] = {forum:"https://www.waze.com/forum/viewforum.php?f=202", wiki:"https://wazeopedia.waze.com/wiki/USA/Puerto_Rico", abbr:"PR"};
-        States["US Virgin Islands"] = {forum:"https://www.waze.com/forum/viewforum.php?f=677", wiki:"https://wazeopedia.waze.com/wiki/USA/Virgin_Islands", abbr:""};
-        States["South Pacific Territories"] = {forum:"https://www.waze.com/forum/viewforum.php?f=954", wiki:"", abbr:""};
+        States.Alabama = {forum:"https://www.waze.com/discuss/c/editors/united-states/alabama/4839", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"AL"};
+        States.Alaska = {forum:"https://www.waze.com/discuss/c/editors/united-states/alaska/4840", wiki:"https://wazeopedia.waze.com/wiki/USA/Alaska", abbr:"AK"};
+        States.Arizona = {forum:"https://www.waze.com/discuss/c/editors/united-states/arizona/4841", wiki:"https://wazeopedia.waze.com/wiki/USA/Arizona", abbr:"AZ"};
+        States.Arkansas = {forum:"https://www.waze.com/discuss/c/editors/united-states/arkansas/4842", wiki:"https://wazeopedia.waze.com/wiki/USA/Arkansas", abbr:"AR"};
+        States.California = {forum:"https://www.waze.com/discuss/c/editors/united-states/california/4843", wiki:"https://wazeopedia.waze.com/wiki/USA/California", abbr:"CA"};
+        States.Colorado = {forum:"https://www.waze.com/discuss/c/editors/united-states/colorado/4844", wiki:"https://wazeopedia.waze.com/wiki/USA/Colorado", abbr:"CO"};
+        States.Connecticut = {forum:"https://www.waze.com/discuss/c/editors/united-states/connecticut/4845", wiki:"https://wazeopedia.waze.com/wiki/USA/Connecticut", abbr:"CT"};
+        States.Delaware = {forum:"https://www.waze.com/discuss/c/editors/united-states/delaware/4846", wiki:"https://wazeopedia.waze.com/wiki/USA/Delaware", abbr:"DE"};
+        States["District of Columbia"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/district-of-columbia/4847", wiki:"https://wazeopedia.waze.com/wiki/USA/District_of_Columbia", abbr:"DC"};
+        States.Florida = {forum:"https://www.waze.com/discuss/c/editors/united-states/florida/4848", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"FL"};
+        States.Georgia = {forum:"https://www.waze.com/discuss/c/editors/united-states/georgia/4849", wiki:"https://wazeopedia.waze.com/wiki/USA/Southeast", abbr:"GA"};
+        States.Hawaii = {forum:"https://www.waze.com/discuss/c/editors/united-states/hawaii/4850", wiki:"https://wazeopedia.waze.com/wiki/USA/Hawaii", abbr:"HI"};
+        States.Idaho = {forum:"https://www.waze.com/discuss/c/editors/united-states/idaho/4851", wiki:"https://wazeopedia.waze.com/wiki/USA/Idaho", abbr:"ID"};
+        States.Illinois = {forum:"https://www.waze.com/discuss/c/editors/united-states/illinois/4852", wiki:"https://wazeopedia.waze.com/wiki/USA/Illinois", abbr:"IL"};
+        States.Indiana = {forum:"https://www.waze.com/discuss/c/editors/united-states/indiana/4853", wiki:"https://wazeopedia.waze.com/wiki/USA/Indiana", abbr:"IN"};
+        States.Iowa = {forum:"https://www.waze.com/discuss/c/editors/united-states/iowa/4854", wiki:"https://wazeopedia.waze.com/wiki/USA/Iowa", abbr:"IA"};
+        States.Kansas = {forum:"https://www.waze.com/discuss/c/editors/united-states/kansas/4855", wiki:"https://wazeopedia.waze.com/wiki/USA/Kansas", abbr:"KS"};
+        States.Kentucky = {forum:"https://www.waze.com/discuss/c/editors/united-states/kentucky/4856", wiki:"https://wazeopedia.waze.com/wiki/USA/Kentucky", abbr:"KY"};
+        States.Louisiana = {forum:"https://www.waze.com/discuss/c/editors/united-states/louisiana/4857", wiki:"https://wazeopedia.waze.com/wiki/USA/Louisiana", abbr:"LA"};
+        States.Maine = {forum:"https://www.waze.com/discuss/c/editors/united-states/maine/4858", wiki:"https://wazeopedia.waze.com/wiki/USA/Maine", abbr:"ME"};
+        States.Maryland = {forum:"https://www.waze.com/discuss/c/editors/united-states/maryland/4859", wiki:"https://wazeopedia.waze.com/wiki/USA/Maryland", abbr:"MD"};
+        States.Massachusetts = {forum:"https://www.waze.com/discuss/c/editors/united-states/massachusetts/4860", wiki:"https://wazeopedia.waze.com/wiki/USA/Massachusetts", abbr:"MA"};
+        States.Michigan = {forum:"https://www.waze.com/discuss/c/editors/united-states/michigan/4861", wiki:"https://wazeopedia.waze.com/wiki/USA/Michigan", abbr:"MI"};
+        States.Minnesota = {forum:"https://www.waze.com/discuss/c/editors/united-states/minnesota/4862", wiki:"https://wazeopedia.waze.com/wiki/USA/Minnesota", abbr:"MN"};
+        States.Mississippi = {forum:"https://www.waze.com/discuss/c/editors/united-states/mississippi/4863", wiki:"https://wazeopedia.waze.com/wiki/USA/Mississippi", abbr:"MS"};
+        States.Missouri = {forum:"https://www.waze.com/discuss/c/editors/united-states/missouri/4864", wiki:"https://wazeopedia.waze.com/wiki/USA/Missouri", abbr:"MO"};
+        States.Montana = {forum:"https://www.waze.com/discuss/c/editors/united-states/montana/4865", wiki:"https://wazeopedia.waze.com/wiki/USA/Montana", abbr:"MT"};
+        States.Nebraska = {forum:"https://www.waze.com/discuss/c/editors/united-states/nebraska/4866", wiki:"https://wazeopedia.waze.com/wiki/USA/Nebraska", abbr:"NE"};
+        States.Nevada = {forum:"https://www.waze.com/discuss/c/editors/united-states/nevada/4867", wiki:"https://wazeopedia.waze.com/wiki/USA/Nevada", abbr:"NV"};
+        States["New Hampshire"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/new-hampshire/4868", wiki:"https://wazeopedia.waze.com/wiki/USA/New_Hampshire", abbr:"NH"};
+        States["New Jersey"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/new-jersey/4869", wiki:"https://wazeopedia.waze.com/wiki/USA/New_Jersey", abbr:"NJ"};
+        States["New Mexico"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/new-mexico/4870", wiki:"https://wazeopedia.waze.com/wiki/USA/New_Mexico", abbr:"NM"};
+        States["New York"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/new-york/4871", wiki:"https://wazeopedia.waze.com/wiki/USA/New_York", abbr:"NY"};
+        States["North Carolina"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/north-carolina/4872", wiki:"https://wazeopedia.waze.com/wiki/USA/North_Carolina", abbr:"NC"};
+        States["North Dakota"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/north-dakota/4873", wiki:"https://wazeopedia.waze.com/wiki/USA/North_Dakota", abbr:"ND"};
+        States.Ohio = {forum:"https://www.waze.com/discuss/c/editors/united-states/ohio/4874", wiki:"https://wazeopedia.waze.com/wiki/USA/Ohio", abbr:"OH"};
+        States.Oklahoma = {forum:"https://www.waze.com/discuss/c/editors/united-states/oklahoma/4875", wiki:"https://wazeopedia.waze.com/wiki/USA/Oklahoma", abbr:"OK"};
+        States.Oregon = {forum:"https://www.waze.com/discuss/c/editors/united-states/oregon/4876", wiki:"https://wazeopedia.waze.com/wiki/USA/Oregon", abbr:"OR"};
+        States.Pennsylvania = {forum:"https://www.waze.com/discuss/c/editors/united-states/pennsylvania/4877", wiki:"https://wazeopedia.waze.com/wiki/USA/Pennsylvania", abbr:"PA"};
+        States["Rhode Island"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/rhode-island/4880", wiki:"https://wazeopedia.waze.com/wiki/USA/Rhode_Island", abbr:"RI"};
+        States["South Carolina"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/south-carolina/4881", wiki:"https://wazeopedia.waze.com/wiki/USA/South_Carolina", abbr:"SC"};
+        States["South Dakota"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/south-dakota/4882", wiki:"https://wazeopedia.waze.com/wiki/USA/South_Dakota", abbr:"SD"};
+        States.Tennessee = {forum:"https://www.waze.com/discuss/c/editors/united-states/tennessee/4884", wiki:"https://wazeopedia.waze.com/wiki/USA/Tennessee", abbr:"TN"};
+        States.Texas = {forum:"https://www.waze.com/discuss/c/editors/united-states/texas/4885", wiki:"https://wazeopedia.waze.com/wiki/USA/Texas", abbr:"TX"};
+        States.Utah = {forum:"https://www.waze.com/discuss/c/editors/united-states/utah/4895", wiki:"https://wazeopedia.waze.com/wiki/USA/Utah", abbr:"UT"};
+        States.Vermont = {forum:"https://www.waze.com/discuss/c/editors/united-states/vermont/4896", wiki:"https://wazeopedia.waze.com/wiki/USA/Vermont", abbr:"VT"};
+        States.Virginia = {forum:"https://www.waze.com/discuss/c/editors/united-states/virginia/4897", wiki:"https://wazeopedia.waze.com/wiki/USA/Virginia", abbr:"VA"};
+        States.Washington = {forum:"https://www.waze.com/discuss/c/editors/united-states/washington/4898", wiki:"https://wazeopedia.waze.com/wiki/USA/Washington", abbr:"WA"};
+        States["West Virginia"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/west-virginia/4899", wiki:"https://wazeopedia.waze.com/wiki/USA/West_Virginia", abbr:"WV"};
+        States.Wisconsin = {forum:"https://www.waze.com/discuss/c/editors/united-states/wisconsin/4900", wiki:"https://wazeopedia.waze.com/wiki/USA/Wisconsin", abbr:"WI"};
+        States.Wyoming = {forum:"https://www.waze.com/discuss/c/editors/united-states/wyoming/4901", wiki:"https://wazeopedia.waze.com/wiki/USA/Wyoming", abbr:"WY"};
+        States["Puerto Rico"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/puerto-rico/4879", wiki:"https://wazeopedia.waze.com/wiki/USA/Puerto_Rico", abbr:"PR"};
+        States["US Virgin Islands"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/us-virgin-islands/4892", wiki:"https://wazeopedia.waze.com/wiki/USA/Virgin_Islands", abbr:""};
+        States["South Pacific Territories"] = {forum:"https://www.waze.com/discuss/c/editors/united-states/south-pacific-territories/4883", wiki:"", abbr:""};
     }
 
     function injectCss() {
@@ -901,7 +940,7 @@ var curr_ver = GM_info.script.version;
             NAServerUpdate: true,
             WMEBetaForum: false,
             DisplayWazeForum: false,
-            Favorites: [{"href":"https://wazeopedia.waze.com/wiki/USA/Waze_Map_Editor/Welcome","text":"Map Editor Welcome"},{"href":"https://wazeopedia.waze.com/wiki/USA/Waze_etiquette","text":"Etiquette"},{"href":"https://wazeopedia.waze.com/wiki/USA/Glossary","text":"Glossary"}],
+            Favorites: [{"href":"https://www.waze.com/wiki/USA/Waze_Map_Editor/Welcome","text":"Map Editor Welcome"},{"href":"https://www.waze.com/wiki/USA/Waze_etiquette","text":"Etiquette"},{"href":"https://www.waze.com/wiki/USA/Glossary","text":"Glossary"}],
             ForumFontColor: "#45B8D1",
             WikiFontColor: "#69BF88",
             BarFontSize: 13,
