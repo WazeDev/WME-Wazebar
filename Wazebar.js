@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2024.10.04.01
+// @version      2024.10.05.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
-// @include      https://www.waze.com/forum/*
+// @match        https://www.waze.com/discuss/*
 // @include      https://www.waze.com/editor*
 // @include      https://www.waze.com/*/editor*
 // @exclude      https://www.waze.com/user/editor*
@@ -43,8 +43,9 @@ var curr_ver = GM_info.script.version;
     'use strict';
 
       function bootstrap(tries = 1) {
-        if ((/forum/.test(location.href) && $('#control_bar_handler').css('visibility') === 'visible') || (typeof(W) != "undefined" && W && W.map &&
+        if ((/discuss/.test(location.href) && $('.d-header').css('visibility') === 'visible') || (typeof(W) != "undefined" && W && W.map &&
             W.model && W.loginManager.user &&
+            WazeWrap && WazeWrap.Ready &&
             $ &&
             W.model.getTopState() &&
             $('.app.container-fluid.show-sidebar').length > 0)) {
@@ -57,12 +58,12 @@ var curr_ver = GM_info.script.version;
 
     function preinit(){
         isBeta = /beta/.test(location.href);
-        forumPage= /forum/.test(location.href);
+        forumPage= /discuss/.test(location.href);
 
         if(forumPage){
             loadScript("https://use.fontawesome.com/73f886e1d5.js", null);
             loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", init);
-            forumUnreadOffset = 25;
+            forumUnreadOffset = 0;
         }
         else{
             loadScriptUpdateMonitor();
@@ -177,7 +178,7 @@ var curr_ver = GM_info.script.version;
         ].join(' '));
 
         if(forumPage){
-            $('.main_content').prepend($Wazebar);
+            $('.d-header').prepend($Wazebar);
             //$('#Wazebar').css('position', 'fixed');
             $('#Wazebar').css('z-index','9999999');
             $('#Wazebar').css('margin-left','20px');
@@ -360,7 +361,7 @@ var curr_ver = GM_info.script.version;
         }); */
 
         for(var i=0;i<WazeBarSettings.CustomLinks.length;i++){
-            if(WazeBarSettings.CustomLinks[i].href.includes("/forum"))
+            if(WazeBarSettings.CustomLinks[i].href.includes("/discuss"))
                 checkUnreadTopics(WazeBarSettings.CustomLinks[i].href, WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'Forum', WazeBarSettings.CustomLinks[i].text.replace(/\s/g, '') + i + 'ForumCount');
         }
 
@@ -390,11 +391,11 @@ var curr_ver = GM_info.script.version;
                     jdat2 = JSON.parse(jdat.topic_list);
                 }
                 else {
-                    console.log("wazebar: invalid json ", parentID);
+                    console.warn("wazebar: invalid json ", parentID);
                     return 0;
                 }
             } else {
-                console.log("wazebar: missing data-preloaded ", parentID);
+                console.warn("wazebar: missing data-preloaded ", parentID);
             }
             var topix = jdat2.topic_list?.topics;
             if (topix === undefined) {
@@ -419,9 +420,9 @@ var curr_ver = GM_info.script.version;
                     var item_to_read = (lrpn > 0 && lrpn < hpn) ? lrpn + 1 : hpn;
                     var info = tobj.slug + valstr(tobj,"last_read_post_number") + valstr(tobj,"highest_post_number") + valstr(tobj,"unseen") + valstr(tobj,"new_posts") + valstr(tobj,"unread_posts") + valstr(tobj,"unread");
                     if (dfhrs < 48 || lrpn < hpn) {
-                        console.log("WB: " + info);
+                        console.info("WB: " + info);
                     }
-                    if ((lrpn > 0 && lrpn < hpn) || (tobj.unseen) || (tobj.unread_posts && tobj.unread_posts > 0) || tobj.unread && tobj.unread > 0) {
+                    if ((lrpn > 0 && lrpn < hpn) || (dfhrs < 168 && lrpn==0 ) || (tobj.unseen) || (tobj.unread_posts && tobj.unread_posts > 0) || tobj.unread && tobj.unread > 0) {
                         count += 1;
                         links += '<div style="position:relative;"><a href="https://www.waze.com/discuss/t/' + tobj.slug + "/" + tobj.id+ "/" + item_to_read + '"' + LoadNewTab() + '>' + tobj.fancy_title + '</a></div>';
                         // unreadItems[2].replace('img src="./styles/prosilver/imageset/icon_topic_solved_list.png"', 'img src="https://www.waze.com/forum/styles/prosilver/imageset/icon_topic_solved_list.png"')
@@ -583,7 +584,7 @@ var curr_ver = GM_info.script.version;
             '<input type="checkbox" id="WMEBetaForumSetting" /><label for="WMEBetaForumSetting">WME Beta Forum</label></br>',
             '<input type="checkbox" id="ScriptsForum" /><label for="ScriptsForum">Scripts Forum</label></br>',
             '<input type="checkbox" id="USSMForumSetting" /><label for="USSMForumSetting">US SM Forum</label></br>',
-            (!forumPage && W.loginManager.user.rank >= 5) ? '<input type="checkbox" id="USChampForumSetting" /><label for="USChampForumSetting">US Champ Forum</label></br>' : '',
+            (!forumPage && W.loginManager.getUserRank() >= 5) ? '<input type="checkbox" id="USChampForumSetting" /><label for="USChampForumSetting">US Champ Forum</label></br>' : '',
             '<input type="checkbox" id="USWikiForumSetting" /><label for="USWikiForumSetting">US Wiki Forum</label></br>',
             '<input type="checkbox" id="NAServerUpdateSetting" /><label for="NAServerUpdateSetting">NA Server Update</label></br>',
             '<input type="checkbox" id="ROWServerUpdateSetting" /><label for="ROWServerUpdateSetting">ROW Server Update</label></br>',,
