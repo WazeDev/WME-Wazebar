@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2024.10.05.01
+// @version      2024.10.06.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -166,7 +166,7 @@ var curr_ver = GM_info.script.version;
             WazeBarSettings.USSMForum ? '<div class="WazeBarText WazeBarForumItem" id="USSMForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-state-managers/4890" ' + LoadNewTab() + '>US SM</a></div>' : '',
             WazeBarSettings.USChampForum ? '<div class="WazeBarText WazeBarForumItem" id="USChampForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-waze-champs/4893" ' + LoadNewTab() + '>US Champ</a></div>' : '',
             WazeBarSettings.USWikiForum ? '<div class="WazeBarText WazeBarForumItem" id="USWikiForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-wiki-discussion/4894" ' + LoadNewTab() + '>US Wiki</a></div>' : '',
-            BuildRegionForumEntries(),
+            //BuildRegionForumEntries(),
             BuildStateForumEntries(),
             BuildStateUnlockEntries(),
             BuildCustomEntries(),
@@ -534,12 +534,12 @@ var curr_ver = GM_info.script.version;
     function BuildRegionForumEntries(){
         //'<div style="display:inline; padding-right:5px; margin-right:5px; border-right:thin solid grey;" id="GLR"><a href="https://www.waze.com/forum/viewforum.php?f=943" target="_blank">GLR Forum</a></div>',
         var regionForums = "";
-        if(WazeBarSettings.header.region){
+     /*   if(WazeBarSettings.header.region){
             Object.keys(WazeBarSettings.header.region).forEach(function(region,index) {
                 if(WazeBarSettings.header.region[region].forum)
                     regionForums += '<div class="WazeBarText WazeBarForumItem" id="' + region.replace(' ', '') + 'Forum"><a href="' + WazeBarSettings.header.region[region].forum.replace("https://www.waze.com",  location.origin) + '" ' + LoadNewTab() + '>' + WazeBarSettings.header.region[region].abbr + '</a></div>';
             });
-        }
+        }*/
         return regionForums;
     }
 
@@ -558,9 +558,9 @@ var curr_ver = GM_info.script.version;
     function BuildSettingsInterface(){
         var $section = $("<div>", {style:"padding:8px 16px", id:"WazeBarSettings"});
         $section.html([
-            '<div id="WazeBarSettings" style="visibility:hidden; position:fixed; top:20%; left:40%; width:700px; min-height:150px; z-index:1000; background-color:white; border-width:3px; border-style:solid; border-radius:10px; padding:4px;">',
+            '<div id="WazeBarSettings" style="visibility:hidden; position:fixed; top:20%; left:30%; width:720px; max-height:800px; z-index:1000; align-items:normal; background-color:white; border-width:3px; border-style:solid; border-radius:10px; padding:4px;">',
             '<div>',
-            '<div style="float: left; margin-right: 2px;">',
+            '<div style="float: left; max-width:190px; margin-right: 2px;">',
             'Font size <input style="width: 50px;" min="8" type="number" id="WazeBarFontSize"/> px <br/><br/> ',
             `Forum font color <button id="colorPickerForumFont" style="width: 15px; height: 15px; border: 2px solid black; background-color:${WazeBarSettings.ForumFontColor}"></button><br/><br/>`,
             `Wiki font color <button id="colorPickerWikiFont" style="width: 15px; height: 15px; border: 2px solid black; background-color:${WazeBarSettings.WikiFontColor}"></button><br/><br/>`,
@@ -588,7 +588,8 @@ var curr_ver = GM_info.script.version;
             '<input type="checkbox" id="USWikiForumSetting" /><label for="USWikiForumSetting">US Wiki Forum</label></br>',
             '<input type="checkbox" id="NAServerUpdateSetting" /><label for="NAServerUpdateSetting">NA Server Update</label></br>',
             '<input type="checkbox" id="ROWServerUpdateSetting" /><label for="ROWServerUpdateSetting">ROW Server Update</label></br>',,
-            'Region ' + BuildRegionDropdown() + '<input type="checkbox" id="RegionForumSetting"/><label for="RegionForumSetting">Forum</label> <input type="checkbox" id="RegionWikiSetting"/><label for="RegionWikiSetting">Wiki</label>',
+            'Region ' + BuildRegionDropdown() + '<input type="checkbox" id="RegionWikiSetting"/><label for="RegionWikiSetting">Wiki</label>',
+            // <input type="checkbox" id="RegionForumSetting"/><label for="RegionForumSetting">Forum</label>
             '<div id="WBStates"></div>',
             '</div>',//close region div
             '</div>',
@@ -598,8 +599,8 @@ var curr_ver = GM_info.script.version;
             '<div id="WazeBarCustomLinks">',
             '<div id="WazeBarCustomLinksList" style="max-height:250px; overflow: auto;"></div>',
             '<div><div style="float:left;">',//textboxes div
-            '<label for="WazeBarCustomURL" style="display:inline-block; width:40px;">URL </label><input type="text" id="WazeBarCustomURL" size="10" style="border: 1px solid #000000; height:20px;"/></br>',
-            '<label for="WazeBarCustomText" style="display:inline-block; width:40px;">Text </label><input type="text" id="WazeBarCustomText" size="10" style="border: 1px solid #000000; height:20px;"/>',
+            '<label for="WazeBarCustomURL" style="display:inline-block; width:40px;">URL </label><input type="text" id="WazeBarCustomURL" size="10" style="border: 1px solid #000000; height:20px;width:130px;"/></br>',
+            '<label for="WazeBarCustomText" style="display:inline-block; width:40px;">Text </label><input type="text" id="WazeBarCustomText" size="10" style="border: 1px solid #000000; height:20px;width:130px;"/>',
 			'</div>', //End textboxes div
 			'<div style="float:right; text-align:center;">',//button div
 			'<button id="WazeBarAddCustomLink">Add</button>',
@@ -629,7 +630,7 @@ var curr_ver = GM_info.script.version;
         });
 
         //Region forum checkbox toggled
-        $('#RegionForumSetting').change(function(){
+     /*   $('#RegionForumSetting').change(function(){
             var selectedItem = $('#WBRegions')[0].options[$('#WBRegions')[0].selectedIndex];
             var region = selectedItem.value;
             var forum = selectedItem.getAttribute("data-forum");
@@ -645,7 +646,7 @@ var curr_ver = GM_info.script.version;
             }
             else
                 delete WazeBarSettings.header.region[region].forum;
-        });
+        }); */
 
         //Region wiki checkbox toggled
         $('#RegionWikiSetting').change(function(){
@@ -733,21 +734,21 @@ var curr_ver = GM_info.script.version;
     }
 
     function SelectedRegionChanged(){
-        setChecked('RegionForumSetting', false);
+        //setChecked('RegionForumSetting', false);
         setChecked('RegionWikiSetting', false);
 
         var selectedItem = $('#WBRegions')[0].options[$('#WBRegions')[0].selectedIndex];
         var region = selectedItem.value;
         var wiki = selectedItem.getAttribute("data-wiki");
-        var forum = selectedItem.getAttribute("data-forum");
+        //var forum = selectedItem.getAttribute("data-forum");
 
         if(!WazeBarSettings.header.region)
             WazeBarSettings.header.region = {};
         if(WazeBarSettings.header.region[region] == null)
             WazeBarSettings.header.region[region] = {};
 
-        if(WazeBarSettings.header.region[region].forum && WazeBarSettings.header.region[region].forum !== "")
-            setChecked('RegionForumSetting', true);
+        //if(WazeBarSettings.header.region[region].forum && WazeBarSettings.header.region[region].forum !== "")
+        //    setChecked('RegionForumSetting', true);
         if(WazeBarSettings.header.region[region].wiki && WazeBarSettings.header.region[region].wiki !== "")
             setChecked('RegionWikiSetting', true);
 
@@ -908,6 +909,9 @@ var curr_ver = GM_info.script.version;
             '.WazeBarText.WazeBarWikiItem a {color:' + WazeBarSettings.WikiFontColor + ';}',
             '.WazeBarText.WazeBarForumItem a {color:' + WazeBarSettings.ForumFontColor + ';}',
             '.WazeBarText.WazeBarCurrState a {color:#FF0000;}',
+            '#WazeBarSettings label {align-items: normal; display:inline-block;}',
+            '#WazeBarSettings select {max-width: 120px;}',
+            '#WazeBarSettings textarea {width: 140px;}',
             '@keyframes fadeIn {99% {visibility: hidden;} 100% {visibility: visible;}'
         ].join(' ');
         $('<style type="text/css" id="WazeBarStyles">' + css + '</style>').appendTo('head');
