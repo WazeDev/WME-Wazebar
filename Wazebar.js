@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2024.10.06.01
+// @version      2024.10.06.02
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -935,7 +935,7 @@ var curr_ver = GM_info.script.version;
         }
 
         var defaultSettings = {
-            inboxInterval: 5,
+            //inboxInterval: 5,
             forumInterval: 2,
             scriptsForum: false,
             header: {region:{}},
@@ -954,6 +954,10 @@ var curr_ver = GM_info.script.version;
             ROWServerUpdate: false
         };
         WazeBarSettings = loadedSettings ? loadedSettings : defaultSettings;
+        if (WazeBarSettings.hasOwnProperty("inboxInterval")) {
+            delete WazeBarSettings.inboxInterval;
+            SaveSettings();
+        }
         for (var prop in defaultSettings) {
             if (!WazeBarSettings.hasOwnProperty(prop))
                 WazeBarSettings[prop] = defaultSettings[prop];
@@ -969,7 +973,7 @@ var curr_ver = GM_info.script.version;
             });
             */
             var localsettings = {
-                inboxInterval: WazeBarSettings.inboxInterval,
+                //inboxInterval: WazeBarSettings.inboxInterval,
                 forumInterval: WazeBarSettings.forumInterval,
                 scriptsForum: WazeBarSettings.scriptsForum,
                 header: WazeBarSettings.header,
