@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2024.10.06.02
-// @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
+// @version      2024.11.04.01
+// @description  Displays a bar at the top of the editor that displays forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
 // @match        https://www.waze.com/discuss/*
@@ -28,7 +28,6 @@
 
 var WazeBarSettings = [];
 var isBeta = false;
-var inboxInterval;
 var forumInterval;
 var forumPage = false;
 var currentState = "";
@@ -160,13 +159,11 @@ var curr_ver = GM_info.script.version;
 			'<button id="WazeBarAddFavorite">Add</button>',
 			'</div>',//End button div
 			'</div></div></div>',
-            // '<div class="WazeBarText WazeBarForumItem" id="Inbox"><a href="' + location.origin + '/forum/ucp.php?i=pm&folder=inbox" target="_blank">Inbox</a></div>',
             WazeBarSettings.WMEBetaForum ? '<div class="WazeBarText WazeBarForumItem" id="WMEBetaForum"><a href="https://www.waze.com/discuss/c/editors/beta-community/4088" ' + LoadNewTab() + '>WME Beta</a></div>' : '',
             WazeBarSettings.scriptsForum ? '<div class="WazeBarText WazeBarForumItem" id="Scripts"><a href="https://www.waze.com/discuss/c/editors/addons-extensions-and-scripts/3984" ' + LoadNewTab() + '>Scripts</a></div>' : '',
             WazeBarSettings.USSMForum ? '<div class="WazeBarText WazeBarForumItem" id="USSMForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-state-managers/4890" ' + LoadNewTab() + '>US SM</a></div>' : '',
             WazeBarSettings.USChampForum ? '<div class="WazeBarText WazeBarForumItem" id="USChampForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-waze-champs/4893" ' + LoadNewTab() + '>US Champ</a></div>' : '',
             WazeBarSettings.USWikiForum ? '<div class="WazeBarText WazeBarForumItem" id="USWikiForum"><a href="https://www.waze.com/discuss/c/editors/united-states/us-wiki-discussion/4894" ' + LoadNewTab() + '>US Wiki</a></div>' : '',
-            //BuildRegionForumEntries(),
             BuildStateForumEntries(),
             BuildStateUnlockEntries(),
             BuildCustomEntries(),
@@ -189,7 +186,6 @@ var curr_ver = GM_info.script.version;
         else
             $('.app.container-fluid.show-sidebar').before($Wazebar);
 
-            //GetPMCount();
             checkForums();
             StartIntervals();
 
@@ -243,9 +239,7 @@ var curr_ver = GM_info.script.version;
 
         $('#WazeBarRefreshButton').click(function(){
             $('#WazeBarRefreshButton i').addClass('fa-spin');
-            //window.clearInterval(inboxInterval);
             window.clearInterval(forumInterval);
-            //GetPMCount();
             checkForums();
             StartIntervals();
             $('#WazeBarRefreshButton i').removeClass('fa-spin');
@@ -270,7 +264,6 @@ var curr_ver = GM_info.script.version;
         setChecked('USWikiForumSetting', WazeBarSettings.USWikiForum);
         setChecked('NAServerUpdateSetting', WazeBarSettings.NAServerUpdate);
         setChecked('ROWServerUpdateSetting', WazeBarSettings.ROWServerUpdate);
-        //$('#inboxInterval')[0].value = WazeBarSettings.inboxInterval;
         $('#forumInterval')[0].value = WazeBarSettings.forumInterval;
         $('#WazeBarFontSize')[0].value = WazeBarSettings.BarFontSize;
         $('#WazeBarUnreadPopupDelay')[0].value = WazeBarSettings.UnreadPopupDelay;
@@ -314,23 +307,8 @@ var curr_ver = GM_info.script.version;
     }
 
     function StartIntervals(){
-        //inboxInterval = setInterval(GetPMCount,WazeBarSettings.inboxInterval * 60000);
         forumInterval = setInterval(checkForums, WazeBarSettings.forumInterval * 60000);
     }
-
-    /*function GetPMCount(){
-        $.get(location.origin + '/forum/ucp.php?i=pm&folder=inbox', function(Inbox){
-            let search = Inbox.match(/Inbox\s*\((\d+)\)/);
-            //Inbox.match(/Inbox\s*\((\d+)\)/)[1];
-            if(search){
-                let count = search[1];
-                $('#PMCount').remove();
-                $('#Inbox a').append("<span style='color:red;font-weight:bold;' id='PMCount'> (" + count + ")</span>");
-            }
-            else
-                $('#PMCount').remove();
-        });
-    } */
 
     function checkForums(){
         if(WazeBarSettings.WMEBetaForum)
@@ -355,10 +333,6 @@ var curr_ver = GM_info.script.version;
                 checkUnreadTopics(url, state.replace(' ', '_')+'Unlock', state.replace(' ', '_')+'UnlockCount');
             }
         });
-        /*Object.keys(WazeBarSettings.header.region).forEach(function(region,index){
-            if(WazeBarSettings.header.region[region].forum)
-                checkUnreadTopics(WazeBarSettings.header.region[region].forum.replace("https://www.waze.com", location.origin), region.replace(/\s/g, '') + 'Forum', region.replace(/\s/g, '')+'ForumCount');
-        }); */
 
         for(var i=0;i<WazeBarSettings.CustomLinks.length;i++){
             if(WazeBarSettings.CustomLinks[i].href.includes("/discuss"))
@@ -408,9 +382,6 @@ var curr_ver = GM_info.script.version;
                 if (Object.prototype.hasOwnProperty.call(topix, tp)) {
                     // do stuff
 
-                    //var pattern = /announce_unread.*\s*<dt.*>\s*<a href=".*"\s*.*<\/a>\s*<div class="list-inner.*">\s*.*\s*.*\s*.*\s*(?:.*\s*)?<a href="(.*)"\s*class="boing topictitle.*">\s*(?:<svg.*\s*<path.*\s*<\/svg>\s*)?(?!<img)(.*?)\s*<\/a>/g;
-                    //var unreadItems;
-
                     var tobj = topix[tp];
                     const ldate = Date.parse(tobj.last_posted_at);
                     const diff = Date.now() - ldate;
@@ -420,12 +391,11 @@ var curr_ver = GM_info.script.version;
                     var item_to_read = (lrpn > 0 && lrpn < hpn) ? lrpn + 1 : hpn;
                     var info = tobj.slug + valstr(tobj,"last_read_post_number") + valstr(tobj,"highest_post_number") + valstr(tobj,"unseen") + valstr(tobj,"new_posts") + valstr(tobj,"unread_posts") + valstr(tobj,"unread");
                     if (dfhrs < 48 || lrpn < hpn) {
-                        console.info("WB: " + info);
+                        // console.info("WB: " + info);
                     }
                     if ((lrpn > 0 && lrpn < hpn) || (dfhrs < 168 && lrpn==0 ) || (tobj.unseen) || (tobj.unread_posts && tobj.unread_posts > 0) || tobj.unread && tobj.unread > 0) {
                         count += 1;
                         links += '<div style="position:relative;"><a href="https://www.waze.com/discuss/t/' + tobj.slug + "/" + tobj.id+ "/" + item_to_read + '"' + LoadNewTab() + '>' + tobj.fancy_title + '</a></div>';
-                        // unreadItems[2].replace('img src="./styles/prosilver/imageset/icon_topic_solved_list.png"', 'img src="https://www.waze.com/forum/styles/prosilver/imageset/icon_topic_solved_list.png"')
                     }
                 }
             }
@@ -579,7 +549,6 @@ var curr_ver = GM_info.script.version;
             '<div id="WBDisplayOptions" style="float: left;border-right: thin solid grey; padding-right:5px; border-left: thin solid grey; padding-left:5px;">',
             '<input type="checkbox" id="WazeForumSetting" /><label for="WazeForumSetting">Display on Forum pages</label></br>',
             '<div style="margin-left:5px;">',
-         // 'Inbox check frequency <input type="number" id="inboxInterval" min="1" style="width:50px;"> mins</br>',
             'Forum check frequency <input type="number" id="forumInterval" min="1" style="width:50px;"> mins</br>',
             '<input type="checkbox" id="WMEBetaForumSetting" /><label for="WMEBetaForumSetting">WME Beta Forum</label></br>',
             '<input type="checkbox" id="ScriptsForum" /><label for="ScriptsForum">Scripts Forum</label></br>',
@@ -589,7 +558,6 @@ var curr_ver = GM_info.script.version;
             '<input type="checkbox" id="NAServerUpdateSetting" /><label for="NAServerUpdateSetting">NA Server Update</label></br>',
             '<input type="checkbox" id="ROWServerUpdateSetting" /><label for="ROWServerUpdateSetting">ROW Server Update</label></br>',,
             'Region ' + BuildRegionDropdown() + '<input type="checkbox" id="RegionWikiSetting"/><label for="RegionWikiSetting">Wiki</label>',
-            // <input type="checkbox" id="RegionForumSetting"/><label for="RegionForumSetting">Forum</label>
             '<div id="WBStates"></div>',
             '</div>',//close region div
             '</div>',
@@ -628,25 +596,6 @@ var curr_ver = GM_info.script.version;
             if(!((event.which >= 48 && event.which <= 57) || (event.which == 46 && (this.value.match(/\./g) || []).length == 0)))
                 event.preventDefault();
         });
-
-        //Region forum checkbox toggled
-     /*   $('#RegionForumSetting').change(function(){
-            var selectedItem = $('#WBRegions')[0].options[$('#WBRegions')[0].selectedIndex];
-            var region = selectedItem.value;
-            var forum = selectedItem.getAttribute("data-forum");
-            var abbr = selectedItem.getAttribute("data-abbr");
-            if(!WazeBarSettings.header.region)
-                WazeBarSettings.header.region = {};
-
-            if(WazeBarSettings.header.region[region] == null)
-                WazeBarSettings.header.region[region] = {};
-            if(this.checked){
-                WazeBarSettings.header.region[region].forum = forum;
-                WazeBarSettings.header.region[region].abbr = abbr;
-            }
-            else
-                delete WazeBarSettings.header.region[region].forum;
-        }); */
 
         //Region wiki checkbox toggled
         $('#RegionWikiSetting').change(function(){
@@ -697,7 +646,6 @@ var curr_ver = GM_info.script.version;
             if(!forumPage)
                 WazeBarSettings.USChampForum = isChecked('USChampForumSetting');
             WazeBarSettings.USWikiForum = isChecked('USWikiForumSetting');
-            //WazeBarSettings.inboxInterval = $('#inboxInterval')[0].value;
             WazeBarSettings.forumInterval = $('#forumInterval')[0].value;
             WazeBarSettings.NAServerUpdate = isChecked('NAServerUpdateSetting');
             WazeBarSettings.ROWServerUpdate = isChecked('ROWServerUpdateSetting');
@@ -734,21 +682,17 @@ var curr_ver = GM_info.script.version;
     }
 
     function SelectedRegionChanged(){
-        //setChecked('RegionForumSetting', false);
         setChecked('RegionWikiSetting', false);
 
         var selectedItem = $('#WBRegions')[0].options[$('#WBRegions')[0].selectedIndex];
         var region = selectedItem.value;
         var wiki = selectedItem.getAttribute("data-wiki");
-        //var forum = selectedItem.getAttribute("data-forum");
 
         if(!WazeBarSettings.header.region)
             WazeBarSettings.header.region = {};
         if(WazeBarSettings.header.region[region] == null)
             WazeBarSettings.header.region[region] = {};
 
-        //if(WazeBarSettings.header.region[region].forum && WazeBarSettings.header.region[region].forum !== "")
-        //    setChecked('RegionForumSetting', true);
         if(WazeBarSettings.header.region[region].wiki && WazeBarSettings.header.region[region].wiki !== "")
             setChecked('RegionWikiSetting', true);
 
@@ -809,7 +753,6 @@ var curr_ver = GM_info.script.version;
                     if(!WazeBarSettings.header[state])
                         WazeBarSettings.header[state] = {};
                     if(this.checked){
-                        //WazeBarSettings.header[state].unlock = location.origin + "/forum/search.php?keywords=" + state + "&terms=all&author=&sv=0&fid%5B%5D=622&sc=1&sf=titleonly&sr=topics&sk=t&sd=d&st=0&ch=300&t=0&submit=Search";
                         WazeBarSettings.header[state].unlock = "https://www.waze.com/discuss/search?q=" + state + "%20%23united-states%3Aus-unlock-and-update-requests%20order%3Alatest";
                         WazeBarSettings.header[state].abbr = States[state].abbr;
                     }
@@ -935,7 +878,6 @@ var curr_ver = GM_info.script.version;
         }
 
         var defaultSettings = {
-            //inboxInterval: 5,
             forumInterval: 2,
             scriptsForum: false,
             header: {region:{}},
@@ -973,7 +915,6 @@ var curr_ver = GM_info.script.version;
             });
             */
             var localsettings = {
-                //inboxInterval: WazeBarSettings.inboxInterval,
                 forumInterval: WazeBarSettings.forumInterval,
                 scriptsForum: WazeBarSettings.scriptsForum,
                 header: WazeBarSettings.header,
