@@ -1,7 +1,6 @@
 # WME Wazebar
 
 ![Version](https://img.shields.io/badge/version-2024.10.05.02-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 ## Table of Contents
 
