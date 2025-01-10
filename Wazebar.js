@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2025.01.09.01
+// @version      2025.01.10.01
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -196,7 +196,7 @@
         width: "100%",
       });
     } else {
-      $(".app.container-fluid.show-sidebar").before($Wazebar);
+      $(".app.container-fluid").before($Wazebar);
     }
 
     checkForums();
@@ -274,11 +274,12 @@
     // Initially set height for the app container
     setHeightForAppContainer();
   }
+
   // Function for setting height dynamically
   function setHeightForAppContainer() {
     if (debug) console.log(`${SCRIPT_NAME}: setHeightForAppContainer called`);
     const wazebarHeight = $("#Wazebar").height();
-    $("body > div.app.container-fluid.show-sidebar").css("height", `calc(100vh - ${wazebarHeight}px)`);
+    $("body > div.app.container-fluid").css("height", `calc(100vh - ${wazebarHeight}px)`);
     window.dispatchEvent(new Event("resize")); // Adjust WME editing area
   }
 
@@ -318,11 +319,11 @@
     // For each favorite, append a structured item
     WazeBarSettings.Favorites.forEach((favorite, index) => {
       const listItem = $(`
-                  <li class="WazeBarFavoritesList favorite-item">
-                      <a href="${favorite.href}" target="_blank">${favorite.text}</a>
-                      <i class="fa fa-times" title="Remove from favorites" data-index="${index}"></i>
-                  </li>
-              `);
+                <li class="WazeBarFavoritesList favorite-item">
+                    <a href="${favorite.href}" target="_blank">${favorite.text}</a>
+                    <i class="fa fa-times" title="Remove from favorites" data-index="${index}"></i>
+                </li>
+            `);
       favoritesList.append(listItem);
     });
 
@@ -343,11 +344,11 @@
     // For each custom link, append a structured item
     WazeBarSettings.CustomLinks.forEach((customLink, index) => {
       const listItem = $(`
-                  <li class="custom-item">
-                      <a href="${customLink.href}" target="_blank">${customLink.text}</a>
-                      <i class="fa fa-times" title="Remove custom link" data-index="${index}"></i>
-                  </li>
-              `);
+                <li class="custom-item">
+                    <a href="${customLink.href}" target="_blank">${customLink.text}</a>
+                    <i class="fa fa-times" title="Remove custom link" data-index="${index}"></i>
+                </li>
+            `);
       customList.append(listItem);
     });
 
@@ -405,7 +406,7 @@
     var count = 0;
     var jdat, dat1;
 
-    if (debug) console.log(`${SCRIPT_NAME}: CheckUnreadTopics() called for `, path, parentID, spanID);
+    if (debug) console.log(`${SCRIPT_NAME}: CheckUnreadTopics() called for `, path , parentID , spanID);
 
     $.get(path, function (page) {
       const jpattern = /data-preloaded=\"(.*)\">/;
@@ -456,26 +457,26 @@
             if (((lrpn > 0 && lrpn < hpn) || (dfhrs < fh && lrpn == 0) || tobj.unseen || tobj.unread > 0 || tobj.unread_posts > 0) && dfhrs < fh) {
               count += 1;
               links += `
-              <li class="WazeBarUnreadList unread-item">
-                  <a href="https://www.waze.com/discuss/t/${tobj.slug}/${tobj.id}/${item_to_read}" ${LoadNewTab()}>${tobj.fancy_title} (${formattedDate})</a>
-              </li>`;
+            <li class="WazeBarUnreadList unread-item">
+                <a href="https://www.waze.com/discuss/t/${tobj.slug}/${tobj.id}/${item_to_read}" ${LoadNewTab()}>${tobj.fancy_title} (${formattedDate})</a>
+            </li>`;
             }
           }
         }
 
         if (count > 0) {
           $("#" + parentID + " a").append(`
-                    <span style='color:red;font-weight:bold;' id='${spanID}'> 
-                    (${count})
-                    <div class='WazeBarUnread' id='WazeBarUnread${spanID}' style='visibility:hidden;
-                        animation-fill-mode: forwards;
-                        left:${$("#" + parentID).position().left}px;
-                        top:${parseInt($("#" + parentID).height()) + forumUnreadOffset}px;'>
-                        <ul class='WazeBarUnreadList' id='WazeBarUnreadList${spanID}'>
-                        </ul>
-                    </div>
-                    </span>
-                `);
+                  <span style='color:red;font-weight:bold;' id='${spanID}'> 
+                  (${count})
+                  <div class='WazeBarUnread' id='WazeBarUnread${spanID}' style='visibility:hidden;
+                      animation-fill-mode: forwards;
+                      left:${$("#" + parentID).position().left}px;
+                      top:${parseInt($("#" + parentID).height()) + forumUnreadOffset}px;'>
+                      <ul class='WazeBarUnreadList' id='WazeBarUnreadList${spanID}'>
+                      </ul>
+                  </div>
+                  </span>
+              `);
 
           $("#WazeBarUnreadList" + spanID).html(links);
 
@@ -830,7 +831,7 @@
       injectCss(); // Step 5: Inject CSS
       $("#WazeBarSettings").fadeOut(); // Step 6: Hide settings dialog
       $(".WazeBarText").css("font-size", $("#WazeBarFontSize").val() + "px"); // Step 7: Update font size
-      setHeightForAppContainer();
+      setHeightForAppContainer(); // Step 8: Reside the the .app.container for any possable changes in font size of the Wazrbar
     });
 
     $("#WBRegions").change(SelectedRegionChanged);
@@ -935,36 +936,36 @@
 
     // Create the header row
     var headerHTML = `
-          <div class="state-header">
-              <div class="state-column">Name</div>
-              <div class="checkbox-column">Forum</div>
-              <div class="checkbox-column">Wiki</div>
-              <div class="checkbox-column">Unlock</div>
-          </div>
-      `;
+        <div class="state-header">
+            <div class="state-column">Name</div>
+            <div class="checkbox-column">Forum</div>
+            <div class="checkbox-column">Wiki</div>
+            <div class="checkbox-column">Unlock</div>
+        </div>
+    `;
 
     // Include the selected region as the first row, only with the Wiki checkbox
     var regionHTML = `
-          <div class="state-row">
-              <div class="state-column">${region}</div>
-              <div class="checkbox-column">-</div> <!-- No Forum checkbox for region -->
-              <div class="checkbox-column"><input type='checkbox' id='RegionWikiSetting' ${wikiCheckboxState ? "checked" : ""} /></div>
-              <div class="checkbox-column">-</div> <!-- No Unlock checkbox for region -->
-          </div>
-      `;
+        <div class="state-row">
+            <div class="state-column">${region}</div>
+            <div class="checkbox-column">-</div> <!-- No Forum checkbox for region -->
+            <div class="checkbox-column"><input type='checkbox' id='RegionWikiSetting' ${wikiCheckboxState ? "checked" : ""} /></div>
+            <div class="checkbox-column">-</div> <!-- No Unlock checkbox for region -->
+        </div>
+    `;
 
     // Create the state rows with all checkboxes
     var statesHTML = states
       .map(function (state) {
         var stateId = state.replace(" ", "_");
         return `
-                  <div class="state-row">
-                      <div class="state-column">${state}</div>
-                      <div class="checkbox-column"><input type='checkbox' id='${stateId}ForumSetting' /></div>
-                      <div class="checkbox-column"><input type='checkbox' id='${stateId}WikiSetting' /></div>
-                      <div class="checkbox-column"><input type='checkbox' id='${stateId}UnlockSetting' /></div>
-                  </div>
-              `;
+                <div class="state-row">
+                    <div class="state-column">${state}</div>
+                    <div class="checkbox-column"><input type='checkbox' id='${stateId}ForumSetting' /></div>
+                    <div class="checkbox-column"><input type='checkbox' id='${stateId}WikiSetting' /></div>
+                    <div class="checkbox-column"><input type='checkbox' id='${stateId}UnlockSetting' /></div>
+                </div>
+            `;
       })
       .join("");
 
@@ -1572,17 +1573,17 @@
   function localAlertInfo(scriptName, message, disableTimeout = false) {
     // Create the basic alert element
     const alertHtml = `
-        <div class="toast-info">
-          <div class="toast-header">
-            <b>${scriptName} - Info</b>
-            <button type="button" class="toast-close-button">&times;</button>
-          </div>
-          <div class="toast-message">
-          <br>
-          ${message}
-          </div>
+      <div class="toast-info">
+        <div class="toast-header">
+          <b>${scriptName} - Info</b>
+          <button type="button" class="toast-close-button">&times;</button>
         </div>
-      `;
+        <div class="toast-message">
+        <br>
+        ${message}
+        </div>
+      </div>
+    `;
 
     // Create the alert element and style it to be centered in the window
     const $alertElement = $(alertHtml).css({
