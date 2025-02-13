@@ -141,7 +141,7 @@
       return null; // Handle the case where no top state is available
     }
     return topState.name;
-  }  
+  }
 
   function updateCurrentStateEntries() {
     const topState = wmeSDK.DataModel.States.getTopState();
@@ -406,7 +406,7 @@
     var count = 0;
     var jdat, dat1;
 
-    if (debug) console.log(`${SCRIPT_NAME}: CheckUnreadTopics() called for `, path , parentID , spanID);
+    if (debug) console.log(`${SCRIPT_NAME}: CheckUnreadTopics() called for `, path, parentID, spanID);
 
     $.get(path, function (page) {
       const jpattern = /data-preloaded=\"(.*)\">/;
@@ -572,19 +572,21 @@
   }
 
   function BuildCurrentStateEntries() {
-    const topCountry = wmeSDK.DataModel.Countries.getTopCountry();
-    const topCountryId = topCountry ? topCountry.id : null;
-    
     var currentState = "";
 
-    if (!forumPage && topCountryId === 235) { 
-      // Only proceed if the top country is the US
-      var currState = getCurrentState();
-      if (!currState || !States[currState]) {
-        return currentState; // Return an empty string if currState or its corresponding States entry is invalid.
+    if (!forumPage) {
+      const topCountry = wmeSDK.DataModel.Countries.getTopCountry();
+      const topCountryId = topCountry ? topCountry.id : null;
+
+      if (topCountryId === 235) {
+        // Only proceed if the top country is the US
+        var currState = getCurrentState();
+        if (!currState || !States[currState]) {
+          return currentState; // Return an empty string if currState or its corresponding States entry is invalid.
+        }
+        currentState += '<div class="WazeBarText WazeBarCurrState" id="' + currState.replace(" ", "_") + 'ForumCurrState"><a href="' + States[currState].forum.replace("https://www.waze.com", location.origin) + '" ' + LoadNewTab() + ">" + States[currState].abbr + "</a></div>";
+        currentState += '<div class="WazeBarText WazeBarCurrState"><a href="' + States[currState].wiki + '" target="_blank">' + States[currState].abbr + " Wiki</a></div>";
       }
-      currentState += '<div class="WazeBarText WazeBarCurrState" id="' + currState.replace(" ", "_") + 'ForumCurrState"><a href="' + States[currState].forum.replace("https://www.waze.com", location.origin) + '" ' + LoadNewTab() + ">" + States[currState].abbr + "</a></div>";
-      currentState += '<div class="WazeBarText WazeBarCurrState"><a href="' + States[currState].wiki + '" target="_blank">' + States[currState].abbr + " Wiki</a></div>";
     }
     return currentState;
   }
