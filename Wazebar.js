@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2025.01.10.01
+// @version      2025.02.08.00
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -406,7 +406,7 @@
     var count = 0;
     var jdat, dat1;
 
-    if (debug) console.log(`${SCRIPT_NAME}: CheckUnreadTopics() called for `, path , parentID , spanID);
+    if (debug) console.log(`${SCRIPT_NAME}: CheckUnreadTopics() called for `, path, parentID, spanID);
 
     $.get(path, function (page) {
       const jpattern = /data-preloaded=\"(.*)\">/;
@@ -573,11 +573,20 @@
 
   function BuildCurrentStateEntries() {
     var currentState = "";
-    if (!forumPage && typeof W.model.countries.objects[235] !== "undefined") {
-      //only do for the US
-      var currState = getCurrentState();
-      currentState += '<div class="WazeBarText WazeBarCurrState" id="' + currState.replace(" ", "_") + 'ForumCurrState"><a href="' + States[currState].forum.replace("https://www.waze.com", location.origin) + '" ' + LoadNewTab() + ">" + States[currState].abbr + "</a></div>";
-      currentState += '<div class="WazeBarText WazeBarCurrState"><a href="' + States[currState].wiki + '" target="_blank">' + States[currState].abbr + " Wiki</a></div>";
+
+    if (!forumPage) {
+      const topCountry = wmeSDK.DataModel.Countries.getTopCountry();
+      const topCountryId = topCountry ? topCountry.id : null;
+
+      if (topCountryId === 235) {
+        // Only proceed if the top country is the US
+        var currState = getCurrentState();
+        if (!currState || !States[currState]) {
+          return currentState; // Return an empty string if currState or its corresponding States entry is invalid.
+        }
+        currentState += '<div class="WazeBarText WazeBarCurrState" id="' + currState.replace(" ", "_") + 'ForumCurrState"><a href="' + States[currState].forum.replace("https://www.waze.com", location.origin) + '" ' + LoadNewTab() + ">" + States[currState].abbr + "</a></div>";
+        currentState += '<div class="WazeBarText WazeBarCurrState"><a href="' + States[currState].wiki + '" target="_blank">' + States[currState].abbr + " Wiki</a></div>";
+      }
     }
     return currentState;
   }
