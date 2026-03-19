@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Wazebar
 // @namespace    https://greasyfork.org/users/30701-justins83-waze
-// @version      2025.04.06.01
+// @version      2026.03.19.00
 // @description  Displays a bar at the top of the editor that displays inbox, forum & wiki links
 // @author       JustinS83
 // @include      https://beta.waze.com/*
@@ -1329,7 +1329,7 @@
     };
     States["North Carolina"] = {
       forum: "https://www.waze.com/discuss/c/editors/united-states/north-carolina/4872",
-      wiki: "https://www.waze.com/discuss/t/south-carolina/378795",
+      wiki: "https://www.waze.com/discuss/t/north-carolina/378520",
       abbr: "NC",
     };
     States["North Dakota"] = {
